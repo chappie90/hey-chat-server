@@ -141,7 +141,8 @@ export const onMessage = async (
             notification = new apn.Notification({
               "aps": {
                 "content-available": "1",
-                "alert": ""
+                // "alert": ""
+                "sound" : ""
               },
               "topic": process.env.APP_ID,
               "payload": {
