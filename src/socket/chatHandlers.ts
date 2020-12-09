@@ -141,8 +141,8 @@ export const onMessage = async (
             notification = new apn.Notification({
               "aps": {
                 "content-available": "1",
-                // "alert": ""
-                "sound" : ""
+                "alert": ""
+                // "sound": ""
               },
               "topic": process.env.APP_ID,
               "payload": {
@@ -151,6 +151,14 @@ export const onMessage = async (
                 "key_3" : "Value_3"
               }
             });
+            global.apnProvider.send(notification, deviceToken)
+              .then( response => {
+                // successful device tokens
+                console.log(response.sent);
+                // failed device tokens
+                console.log(response.failed);
+              });
+          }
           }
         }
 
