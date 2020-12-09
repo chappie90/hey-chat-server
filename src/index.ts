@@ -69,7 +69,7 @@ const s3 = new aws.S3();
 
     // Connect to Apple Push Notification provider API
     // Sandbox or production APN service
-    const apnProduction = process.env.NODE_ENV === 'production' ? true : false;
+    // const apnProduction = process.env.NODE_ENV === 'production' ? true : false;
     const apnOptions = {
       token: {
         // key: `${(global as any).appRoot}/private/certificates/ios/${process.env.APPLE_KEY_FILE_NAME}`,
@@ -77,7 +77,8 @@ const s3 = new aws.S3();
         keyId: process.env.APPLE_KEY_ID,
         teamId: process.env.APPLE_TEAM_ID
       },
-      production: apnProduction
+      // production: apnProduction
+      production: false
     };
     const apnProvider = new apn.Provider(apnOptions);
     (global as any).apnProvider = apnProvider;
