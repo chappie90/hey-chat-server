@@ -46,9 +46,6 @@ mongoose.connection.on('error', (err) => {
 // Push Notification providers API connection
 let iosCert, androidCert;
 
-console.log(process.env.AWS_ACCESS_KEY_ID)
-console.log(process.env.AWS_SECRET_ACCESS_KEY)
-
 // Configure access to S3 bucket and fetch notifications certificates
 aws.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -60,7 +57,7 @@ const s3 = new aws.S3();
   try {
     const iosCertStream = await s3.getObject({
       Bucket: process.env.S3_BUCKET_NAME,
-      Key: `private/certificates/ios/${process.env.APPLE_KEY_FILE_NAME}`
+      Key: `private/certificates/ios/${process.env.APPLE_KEY_FILE}`
     }).promise();
     iosCert = iosCertStream.Body.toString('utf-8');
 
