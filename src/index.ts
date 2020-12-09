@@ -10,6 +10,7 @@ import bodyParser from 'body-parser';
 import serveIndex from 'serve-index';
 import mongoose from 'mongoose';
 import socket from 'socket.io';
+import aws from 'aws-sdk';
 import apn from 'apn';
 import firebaseAdmin from "firebase-admin";
 
@@ -42,27 +43,57 @@ mongoose.connection.on('error', (err) => {
   console.log('Error connecting to database: ' + err);
 });
 
-// Apple Push Notification provider API connection
-// Sandbox or production APN service
-const apnProduction = process.env.NODE_ENV === 'production' ? true : false;
-const options = {
-  token: {
-    key: `${(global as any).appRoot}/private/certificates/${process.env.APPLE_KEY_FILE}`,
-    keyId: process.env.APPLE_KEY_ID,
-    teamId: process.env.APPLE_TEAM_ID
-  },
-  production: apnProduction
-};
-const apnProvider = new apn.Provider(options);
-(global as any).apnProvider = apnProvider;
+// Push Notification providers API connection
+let iosCert, androidCert;
 
-// Firebase Admin connection
-const serviceAccount = require(`${(global as any).appRoot}/private/certificates/${process.env.FIREBASE_ACCOUNT_KEY}`);
-firebaseAdmin.initializeApp({
-  credential: firebaseAdmin.credential.cert(serviceAccount),
-  databaseURL: process.env.FIREBASE_DATABASE_URL
+// Configure access to S3 bucket and fetch notifications certificates
+aws.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
 });
-(global as any).firebaseAdmin = firebaseAdmin;
+const s3 = new aws.S3();
+
+(async () => {
+  try {
+    const iosCertStream = await s3.getObject({
+      Bucket: process.env.S3_BUCKET_NAME,
+      Key: `private/certificates/ios/${process.env.APPLE_KEY_FILE_NAME}`
+    }).promise();
+    iosCert = iosCertStream.Body.toString('utf-8');
+
+    const androidCertStream = await s3.getObject({
+      Bucket: process.env.S3_BUCKET_NAME,
+      Key: `private/certificates/android/${process.env.FIREBASE_SERVICE_ACCOUNT_KEY}`
+    }).promise();
+    androidCert = androidCertStream.Body.toString('utf-8');
+
+    // Connect to Apple Push Notification provider API
+    // Sandbox or production APN service
+    const apnProduction = process.env.NODE_ENV === 'production' ? true : false;
+    const apnOptions = {
+      token: {
+        // key: `${(global as any).appRoot}/private/certificates/ios/${process.env.APPLE_KEY_FILE_NAME}`,
+        key: iosCert,
+        keyId: process.env.APPLE_KEY_ID,
+        teamId: process.env.APPLE_TEAM_ID
+      },
+      production: apnProduction
+    };
+    const apnProvider = new apn.Provider(apnOptions);
+    (global as any).apnProvider = apnProvider;
+
+    // Initialize Firebase Admin
+    // const serviceAccount = require(`${(global as any).appRoot}/private/certificates/android/${process.env.FIREBASE_SERVICE_ACCOUNT_KEY}`);
+    firebaseAdmin.initializeApp({
+      credential: firebaseAdmin.credential.cert(JSON.parse(androidCert)),
+      databaseURL: process.env.FIREBASE_DATABASE_URL
+    });
+    (global as any).firebaseAdmin = firebaseAdmin;
+  } catch (err) {
+    console.log('Subscribe to push notifications providers error');
+    console.log(err);
+  }
+})();
 
 // API routes
 require('./routes')(app);
