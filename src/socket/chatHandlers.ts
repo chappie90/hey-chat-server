@@ -131,6 +131,9 @@ export const onMessage = async (
       } else {
         const data = { chat, newMessage, newTMessage: message, senderId };
 
+        console.log(recipientSocketId)
+        console.log('fucking recipient always online')
+
         // Send new message to recipient and update chat
         // If recipient is online, emit socket event with data
         if (recipientSocketId) {
