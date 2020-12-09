@@ -117,7 +117,7 @@ app.use((err, req: Request, res: Response, next) => {
   // });
 });
 
-const port = process.env.SERVER_PORT || 3006;
+const port = process.env.PORT || 3006;
 
 server.listen(port, () => {
   console.log(`Listening on port ${port}`);
