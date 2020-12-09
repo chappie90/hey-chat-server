@@ -159,7 +159,6 @@ export const onMessage = async (
                 console.log(response.failed);
               });
           }
-          }
         }
 
         // Send confirmation of message delivered to sender and update chat list
