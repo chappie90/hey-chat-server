@@ -19,6 +19,7 @@ export const onMessage = async (
     chatId,
     senderId,
     recipientId,
+    senderName,
     message,
     isFirstMessage
   } = JSON.parse(data);
@@ -129,7 +130,20 @@ export const onMessage = async (
         // Add new chat, register chat id and send confirmation of message delivered to sender
         socket.emit('first_message_sent', JSON.stringify(data));
       } else {
-        const data = { chat, newMessage, newTMessage: message, senderId };
+        // Get number of unread messages
+        const unreadMessagesCount = await Message.find({
+          chatId: chat.chatId,
+          sender: { $ne: senderName },
+          read: false
+        }).count();
+
+        const data = { 
+          chat, 
+          newMessage, 
+          newTMessage: message, 
+          senderId,
+          unreadMessagesCount
+        };
 
         // Send new message to recipient and update chat
         // If recipient is online, emit socket event with data
@@ -285,8 +299,6 @@ export const onMarkAllMessagesAsRead = async (
 
   // Check if message sender is online and get socket id
   if (users[senderId]) {
-
-    console.log('sender of message is online')
     const senderSocketId = users[senderId].id;
     // Notify sender all messages have been read
     const data = { chatId };
