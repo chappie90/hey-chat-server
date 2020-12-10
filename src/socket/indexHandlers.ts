@@ -71,14 +71,14 @@ export const onDisconnect = async (
   console.log('list before')
   console.log(io.sockets.adapter.rooms);
   // Remove all contacts from user channel and delete channel
-  io.of('/').in(userId).clients((error, socketIds) => {
-    if (error) throw error;
-    socketIds.forEach(socketId => {
-      console.log('for each socket')
-      console.log(io.sockets.sockets[socketId]);
-      io.sockets.sockets[socketId].leave(userId);
-    });
-  });
+  // io.of('/').in(userId).clients((error, socketIds) => {
+  //   if (error) throw error;
+  //   socketIds.forEach(socketId => {
+  //     console.log('for each socket')
+  //     console.log(socketId;
+  //     io.sockets.sockets[socketId].leave(userId);
+  //   });
+  // });
   // Get list of all rooms
   console.log('list after')
   console.log(io.sockets.adapter.rooms);
