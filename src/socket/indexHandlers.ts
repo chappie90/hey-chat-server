@@ -15,13 +15,19 @@ export const onConnect = async (
   const userId: string = socket.handshake.query.userId;
   const socketId: string = socket.id;
 
+    // Get list of all rooms
+    console.log('list before')
+    console.log(io.sockets.adapter.rooms);
+
   // Add user to list of users on connect
   users[userId] = socket;
 
   // Create channel for user
   socket.join(userId);
 
-  // users[receiverSocketId].join(userId);
+    // Get list of all rooms
+    console.log('list before')
+    console.log(io.sockets.adapter.rooms);
 
   try {
     const user = await User.findOne({ _id: userId }).lean();
