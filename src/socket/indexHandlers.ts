@@ -15,19 +15,11 @@ export const onConnect = async (
   const userId: string = socket.handshake.query.userId;
   const socketId: string = socket.id;
 
-    // Get list of all rooms
-    console.log('list before')
-    console.log(io.sockets.adapter.rooms);
-
   // Add user to list of users on connect
   users[userId] = socket;
 
   // Create channel for user
   socket.join(userId);
-
-    // Get list of all rooms
-    console.log('list before')
-    console.log(io.sockets.adapter.rooms);
 
   try {
     const user = await User.findOne({ _id: userId }).lean();
@@ -67,21 +59,15 @@ export const onDisconnect = async (
   userId: string
 ) => {
   console.log('Socket disconnected');
-  // Get list of all rooms
-  console.log('list before')
-  console.log(io.sockets.adapter.rooms);
   // Remove all contacts from user channel and delete channel
-  // io.of('/').in(userId).clients((error, socketIds) => {
-  //   if (error) throw error;
-  //   socketIds.forEach(socketId => {
-  //     console.log('for each socket')
-  //     console.log(socketId;
-  //     io.sockets.sockets[socketId].leave(userId);
-  //   });
-  // });
-  // Get list of all rooms
-  console.log('list after')
-  console.log(io.sockets.adapter.rooms);
+  io.of('/').in(userId).clients((error, socketIds) => {
+    if (error) throw error;
+    socketIds.forEach(socketId => {
+      console.log('for each socket')
+      console.log(socketId);
+      io.sockets.sockets[socketId].leave(userId);
+    });
+  });
   // Delete user from list of active users
   delete users[userId];
 };
