@@ -50,6 +50,7 @@ const initSocket = (io: Socket) => {
 
     // User reads messages
     socket.on('mark_messages_as_read', (data: string) => {
+      console.log('marking message as read')
       onMarkAllMessagesAsRead(io, socket, users, data);
     });
 

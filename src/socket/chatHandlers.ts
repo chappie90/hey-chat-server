@@ -285,6 +285,8 @@ export const onMarkAllMessagesAsRead = async (
 
   // Check if message sender is online and get socket id
   if (users[senderId]) {
+
+    console.log('sender of message is online')
     const senderSocketId = users[senderId].id;
     // Notify sender all messages have been read
     const data = { chatId };
