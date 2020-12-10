@@ -21,6 +21,8 @@ export const onConnect = async (
   // Create channel for user
   socket.join(userId);
 
+  // users[receiverSocketId].join(userId);
+
   try {
     const user = await User.findOne({ _id: userId }).lean();
 
@@ -35,6 +37,8 @@ export const onConnect = async (
         }
         // Add online contact to user channel
         users[contactIdStr].join(userId);
+        // Add user to contact's channel
+        socket.join(contactIdStr);
       }
     }
 
@@ -57,26 +61,17 @@ export const onDisconnect = async (
   userId: string
 ) => {
   console.log('Socket disconnected');
-  console.log(Object.keys(users).length);
-  console.log('before')
-  // Get the clients in a room
-  io.in(userId).clients((err , clients) => {
-    console.log('before clients in user room')
-    console.log(clients);
-  });
+  // Get list of all rooms
+  console.log('list before')
+  console.log(io.sockets.adapter.rooms);
   // Remove all contacts from user channel and delete channel
   io.of('/').in(userId).clients((error, socketIds) => {
     if (error) throw error;
-    console.log('socket ids')
-    console.log(socketIds)
     socketIds.forEach(socketId => io.sockets.sockets[socketId].leave(userId));
   });
-  io.in(userId).clients((err , clients) => {
-    console.log('after clients in user room')
-    console.log(clients);
-  });
+  // Get list of all rooms
+  console.log('list after')
+  console.log(io.sockets.adapter.rooms);
   // Delete user from list of active users
   delete users[userId];
-  console.log('after');
-  console.log(Object.keys(users).length);
 };
