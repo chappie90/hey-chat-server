@@ -64,7 +64,7 @@ export const onDisconnect = async (
     if (error) throw error;
     socketIds.forEach(socketId => {
       console.log('for each socket')
-      console.log(socketId);
+      console.log(io.sockets.sockets[socketId]);
       io.sockets.sockets[socketId].leave(userId);
     });
   });
