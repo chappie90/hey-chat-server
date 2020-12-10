@@ -64,11 +64,8 @@ export const onDisconnect = async (
     if (error) throw error;
     socketIds.forEach(socketId => {
       console.log('for each socket')
-      console.log(io.sockets.sockets[socketId]);
-      console.log(io.sockets.sockets[socketId].url)
-      console.log(userId)
-      console.log(io.sockets.sockets[socketId].rooms)
-      console.log(io.sockets.sockets[socketId].userId)
+      console.log(io.sockets.sockets[socketId].handshake.query.userId);
+      console.log(io.sockets.sockets[socketId].handshake);
       io.sockets.sockets[socketId].leave(userId);
     });
   });
