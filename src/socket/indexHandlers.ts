@@ -59,16 +59,23 @@ export const onDisconnect = async (
   userId: string
 ) => {
   console.log('Socket disconnected');
+
+  // Notify all online contacts in your channel you are now offline
+  socket.broadcast.to(userId).emit('user_offline', userId);
+
   // Remove all contacts from user channel and delete channel
   io.of('/').in(userId).clients((error, socketIds) => {
     if (error) throw error;
+
     socketIds.forEach(socketId => {
-      console.log('for each socket')
-      console.log(io.sockets.sockets[socketId].handshake.query.userId);
-      console.log(io.sockets.sockets[socketId].handshake);
+       // Leave contact room
+      const contactId = io.sockets.sockets[socketId].handshake.query.userId;
+      socket.leave(contactId);
+      // Remove contact from user room
       io.sockets.sockets[socketId].leave(userId);
     });
   });
+
   // Delete user from list of active users
   delete users[userId];
 };
