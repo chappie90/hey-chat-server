@@ -1,4 +1,4 @@
-import { onConnect } from './indexHandlers';
+import { onConnect, onDisconnect } from './indexHandlers';
 import { onUpdateProfileImage } from './profileHandlers';
 import { 
   onMessage, 
@@ -54,8 +54,8 @@ const initSocket = (io: Socket) => {
     });
 
     // Disconnect from socket
-    socket.on('disconnect', () => {
-      console.log('Socket disconnected');
+    socket.on('disconnect', async () => {
+      await onDisconnect(io, socket, users, userId);
     });
   });
 };

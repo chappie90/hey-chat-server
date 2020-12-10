@@ -135,7 +135,7 @@ export const onMessage = async (
         // If recipient is online, emit socket event with data
         if (recipientSocketId) {
           io.to(recipientSocketId).emit('message_received', JSON.stringify(data));
-        // } else {
+        } else {
           // If recipient is offline, send silent push notification with data to update app state
           if (deviceOS === 'ios') {
             notification = new apn.Notification({

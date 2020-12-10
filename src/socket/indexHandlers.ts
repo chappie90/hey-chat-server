@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const User = mongoose.model('User');
 
 export const onConnect = async (
-  io: Socket,
+  io: any,
   socket: Socket, 
   users: { [key: string]: Socket }
 ): Promise<{ userId: string, socketId: string }> => {
@@ -48,4 +48,29 @@ export const onConnect = async (
   }
 
   return { userId, socketId };
+};
+
+export const onDisconnect = async (
+  io: any,
+  socket: Socket, 
+  users: { [key: string]: Socket },
+  userId: string
+) => {
+  console.log('Socket disconnected');
+  Object.keys(users).length;
+  console.log(userId)
+  console.log('before')
+  console.log(users)
+  // Remove user from all channels
+  io.of('/').in(userId).clients((error, socketIds) => {
+    if (error) throw error;
+    console.log('socket ids')
+    console.log(socketIds)
+    socketIds.forEach(socketId => io.sockets.sockets[socketId].leave(userId));
+  });
+  // Delete user from list of active users
+  delete users[userId];
+  console.log('after');
+  Object.keys(users).length;
+  console.log(users)
 };
