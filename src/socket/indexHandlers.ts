@@ -58,19 +58,25 @@ export const onDisconnect = async (
 ) => {
   console.log('Socket disconnected');
   Object.keys(users).length;
-  console.log(userId)
   console.log('before')
-  console.log(users)
-  // Remove user from all channels
+  // Get the clients in a room
+  io.in(userId).clients((err , clients) => {
+    console.log('before clients in user room')
+    console.log(clients);
+  });
+  // Remove all contacts from user channel
   io.of('/').in(userId).clients((error, socketIds) => {
     if (error) throw error;
     console.log('socket ids')
     console.log(socketIds)
     socketIds.forEach(socketId => io.sockets.sockets[socketId].leave(userId));
   });
+  io.in(userId).clients((err , clients) => {
+    console.log('after clients in user room')
+    console.log(clients);
+  });
   // Delete user from list of active users
   delete users[userId];
   console.log('after');
   Object.keys(users).length;
-  console.log(users)
 };
