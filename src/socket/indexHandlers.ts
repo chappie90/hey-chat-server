@@ -41,7 +41,7 @@ export const onConnect = async (
     }
 
     // Notify all online contacts in your channel you are now online
-    socket.broadcast.to(userId).emit('new_online_user', userId);
+    socket.broadcast.to(userId).emit('user_online', userId);
 
     // Send yourself a list of your online contacts
     socket.emit('my_online_contacts', onlineContacts);
