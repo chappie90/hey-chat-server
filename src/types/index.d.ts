@@ -23,6 +23,7 @@ export type TContact = {
   username: string;
   pending?: boolean;
   chatId?: string;
+  online: boolean;
 };
 
 export type TChat = {

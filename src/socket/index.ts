@@ -5,7 +5,7 @@ import {
   onLikeMessage, 
   onDeleteMessage,
   onMarkAllMessagesAsRead
-} from './chatHandlers';
+} from './chatsHandlers';
 import { Socket } from 'socket.io';
 
 const users: { [key: string]: Socket } = {};

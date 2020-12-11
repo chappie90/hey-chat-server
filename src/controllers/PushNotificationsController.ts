@@ -7,11 +7,6 @@ const saveDeviceToken = async (req: Request, res: Response, next: NextFunction):
   try {
     const { userId, deviceToken, deviceOS } = req.body;
 
-    console.log('save device token')
-    console.log(userId)
-    console.log(deviceToken)
-    console.log(deviceOS)
-
     await User.updateOne(
       { _id: userId },
       { deviceToken, deviceOS }

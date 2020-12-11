@@ -37,7 +37,7 @@ mongoose.connection.on('connected', () => {
 
   // Socket connection
   const io = socket.listen(server);
-  require('./socket/socket').initSocket(io);
+  require('./socket').initSocket(io);
 });
 mongoose.connection.on('error', (err) => {
   console.log('Error connecting to database: ' + err);

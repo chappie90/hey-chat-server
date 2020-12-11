@@ -2,15 +2,14 @@ import { Socket } from "socket.io";
 const mongoose = require('mongoose');
 
 const User = mongoose.model('User');
+import { getContacts } from './contactsHandlers';
 
 export const onConnect = async (
-  io: any,
+  io: Socket,
   socket: Socket, 
   users: { [key: string]: Socket }
 ): Promise<{ userId: string, socketId: string }> => {
   console.log('Socket connected');
-
-  const onlineContacts: string[] = [];
 
   const userId: string = socket.handshake.query.userId;
   const socketId: string = socket.id;
@@ -21,33 +20,20 @@ export const onConnect = async (
   // Create channel for user
   socket.join(userId);
 
-  try {
-    const user = await User.findOne({ _id: userId }).lean();
+  // Get user contacts
+  const { contacts, onlineContacts } = await getContacts(io, socket, users, userId);
 
-    const contacts = [ ...user.pendingContacts, ...user.contacts ];
+  // Notify all online contacts in your channel you are now online
+  socket.broadcast.to(userId).emit('user_online', userId);
 
-    // Get a list of user contacts who are online
-    for (const contactId of contacts) {
-      const contactIdStr = contactId.toString();
-      if (contactIdStr in users) {
-        if (!onlineContacts.includes(contactIdStr)) {
-          onlineContacts.push(contactIdStr);
-        }
-        // Add online contact to user channel
-        users[contactIdStr].join(userId);
-        // Add user to contact's channel
-        socket.join(contactIdStr);
-      }
-    }
+  // Send user list of contacts
+  socket.emit('get_contacts', contacts);
 
-    // Notify all online contacts in your channel you are now online
-    socket.broadcast.to(userId).emit('user_online', userId);
+  // Send user list of online contacts
+  socket.emit('get_online_contacts', onlineContacts);
 
-    // Send yourself a list of your online contacts
-    socket.emit('my_online_contacts', onlineContacts);
-  } catch (err) {
-    console.log(err);
-  }
+  // Send confirmation user is connected
+  socket.emit('user_connected');
 
   return { userId, socketId };
 };
