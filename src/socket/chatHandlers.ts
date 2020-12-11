@@ -131,16 +131,11 @@ export const onMessage = async (
         socket.emit('first_message_sent', JSON.stringify(data));
       } else {
         // Get number of unread messages
-        console.log(senderName)
-        console.log(chat.chatId)
-
         const unreadMessagesCount = await Message.find({
           chatId: chat.chatId,
-          sender: { $ne: senderName },
+          sender: senderName,
           read: false
         }).count();
-
-        console.log(unreadMessagesCount)
 
         const data = { 
           chat, 
