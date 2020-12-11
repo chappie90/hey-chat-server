@@ -12,7 +12,7 @@ export const getContacts = async (
   userId: string
 ): Promise<{ contacts: TContact[], onlineContacts: TContact[] }> => {
 
-  let onlineContacts: TContact[];
+  let onlineContacts: TContact[] = [];
 
   try {
     const user = await User.findOne(
