@@ -20,24 +20,36 @@ export const onConnect = async (
   // Create channel for user
   socket.join(userId);
 
-  // Get user contacts
-  // Add online contacts to user's channel
-  // Add user to online contacts channels
-  const { contacts, onlineContacts } = await getContacts(io, socket, users, userId);
+  try {
+    const user = await User.findOne(
+      { _id: userId }
+    ).lean()
+      .populate('pendingContacts', 'username')
+      .populate('contacts', 'username')
+      .populate('chats', 'chatId participants')
+      .populate('archivedChats', 'participants');
 
-  // Notify all online contacts in your channel you are now online
-  socket.broadcast.to(userId).emit('user_online', userId);
+    console.log(user)
 
-  // Send user list of contacts
-  socket.emit('get_contacts', JSON.stringify({ contacts }));
+    // Get user contacts
+    // Add online contacts to user's channel
+    // Add user to online contacts channels
+    const { contacts, onlineContacts } = await getContacts(io, socket, users, user);
 
-  // Send user list of online contacts
-  socket.emit('get_online_contacts', JSON.stringify({ onlineContacts }));
+    // Notify all online contacts in your channel you are now online
+    socket.broadcast.to(userId).emit('user_online', userId);
 
-  // Send confirmation user is connected
-  socket.emit('user_connected');
+    // Send user list of contacts
+    socket.emit('get_contacts', JSON.stringify({ contacts }));
 
-  return { userId, socketId };
+    // Send user list of online contacts
+    socket.emit('get_online_contacts', JSON.stringify({ onlineContacts }));
+
+    return { userId, socketId };
+  } catch (err) {
+    console.log('On connect socket error');
+    console.log(err);
+  }
 };
 
 export const onDisconnect = async (
