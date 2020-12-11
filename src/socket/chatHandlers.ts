@@ -131,11 +131,16 @@ export const onMessage = async (
         socket.emit('first_message_sent', JSON.stringify(data));
       } else {
         // Get number of unread messages
+        console.log(senderName)
+        console.log(chat.chatId)
+
         const unreadMessagesCount = await Message.find({
           chatId: chat.chatId,
           sender: { $ne: senderName },
           read: false
         }).count();
+
+        console.log(unreadMessagesCount)
 
         const data = { 
           chat, 
@@ -180,27 +185,27 @@ export const onMessage = async (
         socket.emit('message_sent', JSON.stringify(data));
       }
 
-      // // Send push notification
-      // if (deviceOS === 'ios') {
-      //   notification = new apn.Notification({
-      //     "aps": {
-      //       "alert": {
-      //         "title": "New message received",
-      //         "body": "Hi! How's it going?",
-      //         "sound": "default"
-      //       },
-      //       "badge": 1
-      //     },
-      //     "topic": process.env.APP_ID
-      //   });
-      //   global.apnProvider.send(notification, deviceToken)
-      //     .then( response => {
-      //       // successful device tokens
-      //       console.log(response.sent);
-      //       // failed device tokens
-      //       console.log(response.failed);
-      //     });
-      // }
+      // Send push notification
+      if (deviceOS === 'ios') {
+        notification = new apn.Notification({
+          "aps": {
+            "alert": {
+              "title": "New message received",
+              "body": "Hi! How's it going?",
+              "sound": "default"
+            },
+            "badge": 1
+          },
+          "topic": process.env.APP_ID
+        });
+        global.apnProvider.send(notification, deviceToken)
+          .then( response => {
+            // successful device tokens
+            console.log(response.sent);
+            // failed device tokens
+            console.log(response.failed);
+          });
+      }
       if (deviceOS === 'android') {
         notification = {
           // "notification": {
