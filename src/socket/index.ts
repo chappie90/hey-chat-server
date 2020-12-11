@@ -1,4 +1,4 @@
-import { onConnect, onDisconnect } from './indexHandlers';
+import { onConnect, onDisconnect } from './mainHandlers';
 import { onUpdateProfileImage } from './profileHandlers';
 import { 
   onMessage, 
