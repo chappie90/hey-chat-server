@@ -25,6 +25,11 @@ export const onConnect = async (
   // Add user to online contacts channels
   const { contacts, onlineContacts } = await getContacts(io, socket, users, userId);
 
+  console.log('contacts')
+  console.log(contacts)
+  console.log('onlineContacts')
+  console.log(onlineContacts)
+
   // Notify all online contacts in your channel you are now online
   socket.broadcast.to(userId).emit('user_online', userId);
 
