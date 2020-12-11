@@ -2,19 +2,27 @@ import { Socket } from "socket.io";
 const mongoose = require('mongoose');
 
 const User = mongoose.model('User');
-import { TUser, TContact } from '../types/index';
+import { TContact } from '../types/index';
 
 // Get user contacts
 export const getContacts = async (
   io: Socket,
   socket: Socket, 
   users: { [key: string]: Socket },
-  user: TUser
+  userId: string
 ): Promise<{ contacts: TContact[], onlineContacts: TContact[] }> => {
 
   let onlineContacts: TContact[] = [];
 
   try {
+    const user = await User.findOne(
+      { _id: userId }
+    ).lean()
+      .populate('pendingContacts', 'username')
+      .populate('contacts', 'username')
+      .populate('chats', 'chatId participants')
+      .populate('archivedChats', 'participants');
+
     const chats = [ ...user.chats, ...user.archivedChats ];
     const pendingContacts: TContact[] = user.pendingContacts.map((pC: TContact) => ({ ...pC, pending: true }));
     const contacts: TContact[] = [ ...pendingContacts, ...user.contacts ];
@@ -32,7 +40,7 @@ export const getContacts = async (
         onlineContacts.push(contact);
 
         // Add online contact to user channel
-        users[contactId].join(user._id.toString());
+        users[contactId].join(userId);
         // Add user to contact's channel
         socket.join(contactId);
       } else {

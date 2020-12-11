@@ -29,12 +29,10 @@ export const onConnect = async (
       .populate('chats', 'chatId participants')
       .populate('archivedChats', 'participants');
 
-    console.log(user)
-
     // Get user contacts
     // Add online contacts to user's channel
     // Add user to online contacts channels
-    const { contacts, onlineContacts } = await getContacts(io, socket, users, user);
+    const { contacts, onlineContacts } = await getContacts(io, socket, users, userId);
 
     // Notify all online contacts in your channel you are now online
     socket.broadcast.to(userId).emit('user_online', userId);
