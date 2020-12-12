@@ -159,11 +159,7 @@ export const onMessage = async (
                 // "sound": ""
               },
               "topic": process.env.APP_ID,
-              "payload": {
-                "key_1" : "Value_1",
-                "key_2" : "Value_2",
-                "key_3" : "Value_3"
-              }
+              "payload": data
             });
             global.apnProvider.send(notification, deviceToken)
               .then( response => {
