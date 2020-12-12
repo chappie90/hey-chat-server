@@ -248,6 +248,10 @@ export const onLikeMessage = async (
 
   const message = await Message.findOne({ 'message.id': messageId });
 
+  console.log(chatId)
+  console.log(messageId)
+  console.log(recipientId)
+
   await Message.updateOne(
     { 'message.id': messageId },
     { liked: { 
@@ -258,7 +262,11 @@ export const onLikeMessage = async (
 
   // Check if message recipient is online and get socket id
   if (users[recipientId]) {
+    console.log('active')
+    console.log(recipientId)
+
     let recipientSocketId = users[recipientId].id;
+    console.log(recipientSocketId)
     // Notify recipient of like
     const data = { chatId, messageId };
     io.to(recipientSocketId).emit('messaged_liked', JSON.stringify(data));
