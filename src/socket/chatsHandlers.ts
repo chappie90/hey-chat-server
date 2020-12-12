@@ -148,13 +148,10 @@ export const onMessage = async (
         // Send new message to recipient and update chat
         // If recipient is online, emit socket event with data
         if (recipientSocketId) {
-          console.log('user online')
           io.to(recipientSocketId).emit('message_received', JSON.stringify(data));
         } else {
-          console.log('user not online')
           // If recipient is offline, send silent push notification with data to update app state
           if (deviceOS === 'ios') {
-            console.log('ios device')
             notification = new apn.Notification({
               "aps": {
                 "content-available": "1",
@@ -162,7 +159,11 @@ export const onMessage = async (
                 // "sound": ""
               },
               "topic": process.env.APP_ID,
-              "payload": JSON.stringify(data)
+              "payload": {
+                "silent": true,
+                "type": "message_received",
+                "data": data
+              }
             });
             global.apnProvider.send(notification, deviceToken)
               .then(response => {
