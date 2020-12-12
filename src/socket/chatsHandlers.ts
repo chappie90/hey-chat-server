@@ -305,3 +305,37 @@ export const onMarkAllMessagesAsRead = async (
     io.to(senderSocketId).emit('messages_marked_as_read_sender', JSON.stringify(data));
   }
 };
+
+// User started typing
+export const onStartTyping = async (
+  io: Socket,
+  socket: Socket, 
+  users: { [key: string]: Socket },
+  data: string
+): Promise<void> => {
+  const { senderId, recipientId } = JSON.parse(data);
+
+  // Check if contact is online and get socket id
+  if (users[recipientId]) {
+    const recipientSocketId = users[recipientId].id;
+    // Notify contact user is typing
+    io.to(recipientSocketId).emit('contact_is_typing', senderId);
+  }
+};
+
+// User stopped typing
+export const onStopTyping = async (
+  io: Socket,
+  socket: Socket, 
+  users: { [key: string]: Socket },
+  data: string
+): Promise<void> => {
+  const { senderId, recipientId } = JSON.parse(data);
+
+  // Check if contact is online and get socket id
+  if (users[recipientId]) {
+    const recipientSocketId = users[recipientId].id;
+    // Notify contact user has stopped typing
+    io.to(recipientSocketId).emit('contact_stopped_typing', senderId);
+  }
+};

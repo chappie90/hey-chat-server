@@ -4,7 +4,9 @@ import {
   onMessage, 
   onLikeMessage, 
   onDeleteMessage,
-  onMarkAllMessagesAsRead
+  onMarkAllMessagesAsRead,
+  onStartTyping,
+  onStopTyping
 } from './chatsHandlers';
 import { Socket } from 'socket.io';
 
@@ -52,6 +54,16 @@ const initSocket = (io: Socket) => {
     socket.on('mark_messages_as_read', (data: string) => {
       console.log('marking message as read')
       onMarkAllMessagesAsRead(io, socket, users, data);
+    });
+
+    // User starts typing
+    socket.on('start_typing', (data: string) => {
+      onStartTyping(io, socket, users, data);
+    });
+
+    // User stops typing
+    socket.on('stop_typing', (data: string) => {
+      onStopTyping(io, socket, users, data);
     });
 
     // Disconnect from socket
