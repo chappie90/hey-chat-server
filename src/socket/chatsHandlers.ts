@@ -162,7 +162,7 @@ export const onMessage = async (
               "payload": {
                 "silent": true,
                 "type": "message_received",
-                "data": data
+                "payload": JSON.stringify(data)
               }
             });
             global.apnProvider.send(notification, deviceToken)
