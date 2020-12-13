@@ -254,12 +254,13 @@ export const onLikeMessage = async (
     }}
   );
 
+  const response = { chatId, messageId };
+
   // Check if message recipient is online and get socket id
   if (users[recipientId]) {
     let recipientSocketId = users[recipientId].id;
     // Notify recipient of like
-    const data = { chatId, messageId };
-    io.to(recipientSocketId).emit('message_liked', JSON.stringify(data));
+    io.to(recipientSocketId).emit('message_liked', JSON.stringify(response));
   } else {
     // If recipient is offline, send silent push notification with data to update app state
     // Check device OS to use approriate notification provider and get device token
@@ -276,7 +277,7 @@ export const onLikeMessage = async (
         "payload": {
           "silent": true,
           "type": "message_liked",
-          "payload": JSON.stringify(data)
+          "payload": JSON.stringify(response)
         }
       });
       global.apnProvider.send(notification, deviceToken)
@@ -288,25 +289,6 @@ export const onLikeMessage = async (
           console.log(response.failed);
         });
     }
-
-    const notification_2 = new apn.Notification({
-      "aps": {
-        "alert": {
-          "title": "Message liked",
-          "body": "Hi! How's it going?",
-          "sound": "default"
-        },
-        "badge": 1
-      },
-      "topic": process.env.APP_ID
-    });
-    global.apnProvider.send(notification_2, deviceToken)
-      .then( response => {
-        // successful device tokens
-        console.log(response.sent);
-        // failed device tokens
-        console.log(response.failed);
-      });
   }
 };
 
@@ -320,12 +302,13 @@ export const onDeleteMessage = async (
 
   await Message.deleteOne({ 'message.id': messageId });
 
+  const response = { chatId, messageId };
+
   // Check if message recipient is online and get socket id
   if (users[recipientId]) {
     const recipientSocketId = users[recipientId].id;
     // Notify recipient of delete
-    const data = { chatId, messageId };
-    io.to(recipientSocketId).emit('message_deleted', JSON.stringify(data));
+    io.to(recipientSocketId).emit('message_deleted', JSON.stringify(response));
   } else {
     // If recipient is offline, send silent push notification with data to update app state
     // Check device OS to use approriate notification provider and get device token
@@ -342,7 +325,7 @@ export const onDeleteMessage = async (
         "payload": {
           "silent": true,
           "type": "message_deleted",
-          "payload": JSON.stringify(data)
+          "payload": JSON.stringify(response)
         }
       });
       global.apnProvider.send(notification, deviceToken)
@@ -369,12 +352,13 @@ export const onMarkAllMessagesAsRead = async (
   // Mark all messages as read
   await Message.updateMany({ chatId }, { read: true });
 
+  const response = { chatId };
+
   // Check if message sender is online and get socket id
   if (users[senderId]) {
     const senderSocketId = users[senderId].id;
     // Notify sender all messages have been read
-    const data = { chatId };
-    io.to(senderSocketId).emit('messages_marked_as_read_sender', JSON.stringify(data));
+    io.to(senderSocketId).emit('messages_marked_as_read_sender', JSON.stringify(response));
   } else {
     // If recipient is offline, send silent push notification with data to update app state
     // Check device OS to use approriate notification provider and get device token
@@ -391,7 +375,7 @@ export const onMarkAllMessagesAsRead = async (
         "payload": {
           "silent": true,
           "type": "messages_marked_as_read_sender",
-          "payload": JSON.stringify(data)
+          "payload": JSON.stringify(response)
         }
       });
       global.apnProvider.send(notification, deviceToken)
