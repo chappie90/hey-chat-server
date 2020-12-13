@@ -266,6 +266,10 @@ export const onLikeMessage = async (
     const recipient = await User.findOne({ _id: recipientId });
     const { deviceOS, deviceToken } = recipient;
 
+    console.log(deviceOS)
+    console.log(deviceToken)
+    console.log('on like message')
+
     if (deviceOS === 'ios') {
       const notification = new apn.Notification({
         "aps": {
