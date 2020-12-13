@@ -37,12 +37,12 @@ const initSocket = (io: Socket) => {
 
     // User likes message
     socket.on('like_message', (data: string) => {
-      onLikeMessage(io, socket, users, data);
+      onLikeMessage(io, users, data);
     });
 
     // User deletes message
     socket.on('delete_message', (data: string) => {
-      onDeleteMessage(io, socket, users, data);
+      onDeleteMessage(io, users, data);
     });
 
     // User updated profile image

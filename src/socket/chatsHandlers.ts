@@ -156,7 +156,6 @@ export const onMessage = async (
               "aps": {
                 "content-available": "1",
                 "alert": ""
-                // "sound": ""
               },
               "topic": process.env.APP_ID,
               "payload": {
@@ -240,7 +239,6 @@ export const onMessage = async (
 // User likes message
 export const onLikeMessage = async (
   io: Socket,
-  socket: Socket, 
   users: { [key: string]: Socket },
   data: string
 ): Promise<void> => {
@@ -262,13 +260,40 @@ export const onLikeMessage = async (
     // Notify recipient of like
     const data = { chatId, messageId };
     io.to(recipientSocketId).emit('message_liked', JSON.stringify(data));
+  } else {
+    // If recipient is offline, send silent push notification with data to update app state
+    // Check device OS to use approriate notification provider and get device token
+    const recipient = await User.findOne({ _id: recipientId });
+    const { deviceOS, deviceToken } = recipient;
+
+    if (deviceOS === 'ios') {
+      const notification = new apn.Notification({
+        "aps": {
+          "content-available": "1",
+          "alert": ""
+        },
+        "topic": process.env.APP_ID,
+        "payload": {
+          "silent": true,
+          "type": "message_liked",
+          "payload": JSON.stringify(data)
+        }
+      });
+      global.apnProvider.send(notification, deviceToken)
+        .then(response => {
+          console.log('sent silent message')
+          // successful device tokens
+          console.log(response.sent);
+          // failed device tokens
+          console.log(response.failed);
+        });
+    }
   }
 };
 
 // User deletes message
 export const onDeleteMessage = async (
   io: Socket,
-  socket: Socket, 
   users: { [key: string]: Socket },
   data: string
 ): Promise<void> => {
@@ -282,6 +307,34 @@ export const onDeleteMessage = async (
     // Notify recipient of delete
     const data = { chatId, messageId };
     io.to(recipientSocketId).emit('message_deleted', JSON.stringify(data));
+  } else {
+    // If recipient is offline, send silent push notification with data to update app state
+    // Check device OS to use approriate notification provider and get device token
+    const recipient = await User.findOne({ _id: recipientId });
+    const { deviceOS, deviceToken } = recipient;
+
+    if (deviceOS === 'ios') {
+      const notification = new apn.Notification({
+        "aps": {
+          "content-available": "1",
+          "alert": ""
+        },
+        "topic": process.env.APP_ID,
+        "payload": {
+          "silent": true,
+          "type": "message_deleted",
+          "payload": JSON.stringify(data)
+        }
+      });
+      global.apnProvider.send(notification, deviceToken)
+        .then(response => {
+          console.log('sent silent message')
+          // successful device tokens
+          console.log(response.sent);
+          // failed device tokens
+          console.log(response.failed);
+        });
+    }
   }
 };
 
@@ -303,6 +356,34 @@ export const onMarkAllMessagesAsRead = async (
     // Notify sender all messages have been read
     const data = { chatId };
     io.to(senderSocketId).emit('messages_marked_as_read_sender', JSON.stringify(data));
+  } else {
+    // If recipient is offline, send silent push notification with data to update app state
+    // Check device OS to use approriate notification provider and get device token
+    const sender = await User.findOne({ _id: senderId });
+    const { deviceOS, deviceToken } = sender;
+
+    if (deviceOS === 'ios') {
+      const notification = new apn.Notification({
+        "aps": {
+          "content-available": "1",
+          "alert": ""
+        },
+        "topic": process.env.APP_ID,
+        "payload": {
+          "silent": true,
+          "type": "messages_marked_as_read_sender",
+          "payload": JSON.stringify(data)
+        }
+      });
+      global.apnProvider.send(notification, deviceToken)
+        .then(response => {
+          console.log('sent silent message')
+          // successful device tokens
+          console.log(response.sent);
+          // failed device tokens
+          console.log(response.failed);
+        });
+    }
   }
 };
 
