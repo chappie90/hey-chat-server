@@ -266,10 +266,6 @@ export const onLikeMessage = async (
     const recipient = await User.findOne({ _id: recipientId });
     const { deviceOS, deviceToken } = recipient;
 
-    console.log(deviceOS)
-    console.log(deviceToken)
-    console.log('on like message')
-
     if (deviceOS === 'ios') {
       const notification = new apn.Notification({
         "aps": {
@@ -292,6 +288,25 @@ export const onLikeMessage = async (
           console.log(response.failed);
         });
     }
+
+    const notification_2 = new apn.Notification({
+      "aps": {
+        "alert": {
+          "title": "Message liked",
+          "body": "Hi! How's it going?",
+          "sound": "default"
+        },
+        "badge": 1
+      },
+      "topic": process.env.APP_ID
+    });
+    global.apnProvider.send(notification_2, deviceToken)
+      .then( response => {
+        // successful device tokens
+        console.log(response.sent);
+        // failed device tokens
+        console.log(response.failed);
+      });
   }
 };
 
