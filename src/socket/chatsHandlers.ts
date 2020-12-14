@@ -349,6 +349,10 @@ export const onMarkAllMessagesAsRead = async (
 ): Promise<void> => {
   const { chatId, senderId } = JSON.parse(data);
 
+  console.log(chatId)
+  console.log(senderId)
+  console.log('dali')
+
   // Mark all messages as read
   await Message.updateMany({ chatId }, { read: true });
 
