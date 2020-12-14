@@ -124,8 +124,31 @@ export const onMessage = async (
         const data = { newChat, newMessage };
 
         // Add new chat and send new message to recipient
+        // If recipient is online, emit socket event with data
         if (recipientSocketId) {
           io.to(recipientSocketId).emit('first_message_received', JSON.stringify(data));
+        } else {
+          // If recipient is offline, send silent push notification with data to update app state
+          if (deviceOS === 'ios') {
+            notification = new apn.Notification({
+              "aps": {
+                "content-available": "1",
+              },
+              "topic": process.env.APP_ID,
+              "payload": {
+                "silent": true,
+                "type": "first_message_received",
+                "payload": JSON.stringify(data)
+              }
+            });
+            global.apnProvider.send(notification, deviceToken)
+              .then(response => {
+                // successful device tokens
+                console.log(response.sent);
+                // failed device tokens
+                console.log(response.failed);
+              });
+          }
         }
         // Add new chat, register chat id and send confirmation of message delivered to sender
         socket.emit('first_message_sent', JSON.stringify(data));
@@ -166,7 +189,6 @@ export const onMessage = async (
             });
             global.apnProvider.send(notification, deviceToken)
               .then(response => {
-                console.log('sent silent message')
                 // successful device tokens
                 console.log(response.sent);
                 // failed device tokens
@@ -282,7 +304,6 @@ export const onLikeMessage = async (
       });
       global.apnProvider.send(notification, deviceToken)
         .then(response => {
-          console.log('sent silent message')
           // successful device tokens
           console.log(response.sent);
           // failed device tokens
@@ -330,7 +351,6 @@ export const onDeleteMessage = async (
       });
       global.apnProvider.send(notification, deviceToken)
         .then(response => {
-          console.log('sent silent message')
           // successful device tokens
           console.log(response.sent);
           // failed device tokens
@@ -380,7 +400,6 @@ export const onMarkAllMessagesAsRead = async (
       });
       global.apnProvider.send(notification, deviceToken)
         .then(response => {
-          console.log('sent silent message')
           // successful device tokens
           console.log(response.sent);
           // failed device tokens
