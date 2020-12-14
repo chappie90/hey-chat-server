@@ -43,6 +43,9 @@ export const onConnect = async (
     // Send user list of online contacts
     socket.emit('get_online_contacts', JSON.stringify({ onlineContacts }));
 
+    // Notify user connection is successful
+    socket.emit('user_connected');
+
     return { userId, socketId };
   } catch (err) {
     console.log('On connect socket error');
