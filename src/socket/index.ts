@@ -24,11 +24,6 @@ const initSocket = (io: Socket) => {
     // io.in(userId).clients((err , clients) => {
     //   console.log(clients);
     // });
-    
-    // User connects
-    socket.on('online', (userId: string) => {
-      console.log(userId);
-    });
   
     // User sends new message
     socket.on('message', (data: string) => {
@@ -52,7 +47,6 @@ const initSocket = (io: Socket) => {
 
     // User reads messages
     socket.on('mark_messages_as_read', (data: string) => {
-      console.log('marking message as read')
       onMarkAllMessagesAsRead(io, socket, users, data);
     });
 

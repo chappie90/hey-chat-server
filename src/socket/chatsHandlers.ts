@@ -271,7 +271,7 @@ export const onLikeMessage = async (
       const notification = new apn.Notification({
         "aps": {
           "content-available": "1",
-          "alert": ""
+          // "alert": ""
         },
         "topic": process.env.APP_ID,
         "payload": {
@@ -319,7 +319,7 @@ export const onDeleteMessage = async (
       const notification = new apn.Notification({
         "aps": {
           "content-available": "1",
-          "alert": ""
+          // "alert": ""
         },
         "topic": process.env.APP_ID,
         "payload": {
@@ -349,10 +349,6 @@ export const onMarkAllMessagesAsRead = async (
 ): Promise<void> => {
   const { chatId, senderId } = JSON.parse(data);
 
-  console.log(chatId)
-  console.log(senderId)
-  console.log('dali')
-
   // Mark all messages as read
   await Message.updateMany({ chatId }, { read: true });
 
@@ -373,7 +369,7 @@ export const onMarkAllMessagesAsRead = async (
       const notification = new apn.Notification({
         "aps": {
           "content-available": "1",
-          "alert": ""
+          // "alert": ""
         },
         "topic": process.env.APP_ID,
         "payload": {
