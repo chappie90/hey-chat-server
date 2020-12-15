@@ -37,7 +37,7 @@ const userSchema = new Schema({
   pendingContacts: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   contacts: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   chats: [{ type: Schema.Types.ObjectId, ref: 'Chat' }],
-  mutedChats: [{ type: Schema.Types.ObjectId, ref: 'Chat' }],
+  mutedChats: [{ type: String }],
   deletedChats: [{ type: Schema.Types.ObjectId, ref: 'Chat' }],
   deviceToken: { type: String },
   deviceOS: { type: String }
