@@ -213,7 +213,10 @@ export const onMessage = async (
             },
             "badge": 1
           },
-          "topic": process.env.APP_ID
+          "topic": process.env.APP_ID,
+          "payload": {
+            "payload": JSON.stringify(data)
+          }
         });
         global.apnProvider.send(notification, deviceToken)
           .then( response => {
