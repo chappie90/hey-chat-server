@@ -43,10 +43,7 @@ const getChats = async (req: Request, res: Response, next: NextFunction): Promis
       chat.unreadMessagesCount = unreadMessagesCount;
 
       // Get muted chats
-      if (user.mutedChats.includes(chat._id)) {
-        console.log(chat._id);
-        chat.muted = true;
-      }
+      chat.muted = user.mutedChats.includes(chat._id) ? true : false;
     } 
 
     res.status(200).send({ chats });
