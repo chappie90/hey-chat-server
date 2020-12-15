@@ -133,6 +133,7 @@ export const onMessage = async (
             notification = new apn.Notification({
               "aps": {
                 "content-available": "1",
+                "sound": ""
               },
               "topic": process.env.APP_ID,
               "payload": {
@@ -178,7 +179,7 @@ export const onMessage = async (
             notification = new apn.Notification({
               "aps": {
                 "content-available": "1",
-                "alert": ""
+                "sound": ""
               },
               "topic": process.env.APP_ID,
               "payload": {
@@ -293,7 +294,7 @@ export const onLikeMessage = async (
       const notification = new apn.Notification({
         "aps": {
           "content-available": "1",
-          // "alert": ""
+          "sound": ""
         },
         "topic": process.env.APP_ID,
         "payload": {
@@ -340,7 +341,7 @@ export const onDeleteMessage = async (
       const notification = new apn.Notification({
         "aps": {
           "content-available": "1",
-          // "alert": ""
+          "sound": ""
         },
         "topic": process.env.APP_ID,
         "payload": {
@@ -389,7 +390,7 @@ export const onMarkAllMessagesAsRead = async (
       const notification = new apn.Notification({
         "aps": {
           "content-available": "1",
-          // "alert": ""
+          "sound": ""
         },
         "topic": process.env.APP_ID,
         "payload": {
