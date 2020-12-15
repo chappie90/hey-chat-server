@@ -87,8 +87,25 @@ const getMoreMessages = async (req: Request, res: Response, next: NextFunction):
   }
 };
 
+const muteChat = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  const { userId, chatId, newValue } = req.query;
+
+  try {
+    const updateCondition = newValue ?
+      { $pull: { mutedChats: chatId } } :
+      { $addToSet: { mutedChats: chatId } };
+
+    await User.updateOne({ _id: userId }, updateCondition);
+
+    res.status(200).send({ success: true });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export default {
   getChats,
   getMessages,
-  getMoreMessages
+  getMoreMessages,
+  muteChat
 };
