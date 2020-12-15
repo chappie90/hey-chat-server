@@ -15,7 +15,7 @@ export type TUser = {
   pendingContacts: TContact[];
   contacts: TContact[];
   chats: TChat[];
-  archivedChats: TChat[];
+  deletedChats: TChat[];
 };
 
 export type TContact = {
@@ -34,7 +34,6 @@ export type TChat = {
   createDate: Date; 
   requestAccepted?: boolean;
   requester?: number;
-  muted: false;
   lastMessage: string;
   unreadMessagesCount: number;
 };

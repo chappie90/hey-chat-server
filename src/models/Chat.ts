@@ -11,11 +11,6 @@ const chatSchema = new mongoose.Schema({
   },
   requestAccepted: { type: Boolean, default: false },
   requester: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  muted: {
-    type: Boolean,
-    required: true,
-    default: false
-  },
   creator: String,
   image: {
     name: String

@@ -15,7 +15,7 @@ export const getContacts = async (
   let onlineContacts: TContact[] = [];
 
   try {
-    const chats = [ ...user.chats, ...user.archivedChats ];
+    const chats = [ ...user.chats, ...user.deletedChats ];
     const pendingContacts: TContact[] = user.pendingContacts.map((pC: TContact) => ({ ...pC, pending: true }));
     const contacts: TContact[] = [ ...pendingContacts, ...user.contacts ];
 

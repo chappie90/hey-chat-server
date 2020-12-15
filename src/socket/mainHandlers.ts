@@ -27,7 +27,7 @@ export const onConnect = async (
       .populate('pendingContacts', 'username')
       .populate('contacts', 'username')
       .populate('chats', 'chatId participants')
-      .populate('archivedChats', 'participants');
+      .populate('deletedChats', 'participants');
 
     // Get user contacts
     // Add online contacts to user's channel

@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const User = mongoose.model('User');
 const Chat = mongoose.model('Chat');
 const Message = mongoose.model('Message');
-import { TMessage } from '../types/index';
 
 const getChats = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { userId } = req.query;
@@ -42,6 +41,12 @@ const getChats = async (req: Request, res: Response, next: NextFunction): Promis
         read: false
       }).count();
       chat.unreadMessagesCount = unreadMessagesCount;
+
+      // Get muted chats
+      if (user.mutedChats.includes(chat._id)) {
+        console.log(chat._id);
+        chat.muted = true;
+      }
     } 
 
     res.status(200).send({ chats });
