@@ -88,11 +88,7 @@ const getMoreMessages = async (req: Request, res: Response, next: NextFunction):
 };
 
 const muteChat = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  const { userId, chatId, newValue } = req.query;
-
-  console.log(userId)
-  console.log(chatId)
-  console.log(newValue)
+  const { userId, chatId, newValue } = req.body;
 
   try {
     const updateCondition = newValue ?
