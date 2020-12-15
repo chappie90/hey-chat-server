@@ -90,10 +90,16 @@ const getMoreMessages = async (req: Request, res: Response, next: NextFunction):
 const muteChat = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { userId, chatId, newValue } = req.query;
 
+  console.log(userId)
+  console.log(chatId)
+  console.log(newValue)
+
   try {
     const updateCondition = newValue ?
       { $addToSet: { mutedChats: chatId } } :
       { $pull: { mutedChats: chatId } };
+
+    console.log(updateCondition)
 
     await User.updateOne({ _id: userId }, updateCondition);
 
