@@ -92,8 +92,8 @@ const muteChat = async (req: Request, res: Response, next: NextFunction): Promis
 
   try {
     const updateCondition = newValue ?
-      { $pull: { mutedChats: chatId } } :
-      { $addToSet: { mutedChats: chatId } };
+      { $addToSet: { mutedChats: chatId } } :
+      { $pull: { mutedChats: chatId } };
 
     await User.updateOne({ _id: userId }, updateCondition);
 
