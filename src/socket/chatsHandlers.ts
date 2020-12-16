@@ -188,32 +188,7 @@ export const onMessage = async (
             }
           );
 
-          if (recipientSocketId) {
-            io.to(recipientSocketId).emit('chat_restored', JSON.stringify(data));
-          } else {
-            // If recipient is offline, send silent push notification with data to update app state
-            if (deviceOS === 'ios') {
-              notification = new apn.Notification({
-                "aps": {
-                  "content-available": "1",
-                  "sound": ""
-                },
-                "topic": process.env.APP_ID,
-                "payload": {
-                  "silent": true,
-                  "type": "chat_restored",
-                  "payload": JSON.stringify(data)
-                }
-              });
-              global.apnProvider.send(notification, deviceToken)
-                .then(response => {
-                  // successful device tokens
-                  console.log(response.sent);
-                  // failed device tokens
-                  console.log(response.failed);
-                });
-            }
-          }
+          socket.emit('chat_restored', JSON.stringify(data));
         }
 
         // Send new message to recipient and update chat
