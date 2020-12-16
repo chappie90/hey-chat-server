@@ -5,7 +5,7 @@ import apn from 'apn';
 const User = mongoose.model('User');
 const Chat = mongoose.model('Chat');
 const Message = mongoose.model('Message');
-import { TChat } from '../types/index';
+import { TChat, TContact } from '../types/index';
 
 // User sends new message
 export const onMessage = async (
@@ -26,12 +26,15 @@ export const onMessage = async (
 
   let chat: TChat,
       newChat,
+      recipient,
       recipientSocketId: string,
       notification;
 
   // Update database
   // Private chat
   if (chatType === 'private') {
+
+    recipient = await User.findOne({ _id: recipientId }); 
 
     if (isFirstMessage) { 
       // Create chat if first message
@@ -90,6 +93,12 @@ export const onMessage = async (
           );
         }
       }
+
+      // If chat has been delete by recipient, block messages
+      if (recipient.deletedChats.includes(chat._id)) {
+        console.log('chat deleted, messages blocked')
+        return;
+      }
     }
 
   }
@@ -116,65 +125,8 @@ export const onMessage = async (
         recipientSocketId = users[recipientId].id;
       }
       
-      const recipient = await User.findOne({ _id: recipientId });
-
       // Check device OS to use approriate notification provider and get device token
       const { deviceOS, deviceToken } = recipient;
-
-      // If chat has been previously deleted by recipient, restore chat
-      if (recipient.deletedChats.includes(chat._id)) {
-        console.log('chat deleted, being restored')
-
-        await User.updateOne(
-          { _id: recipientId }, 
-          { 
-            $pull: { deletedChats: recipientId },
-            $addToSet: { chats: recipientId }
-          }
-        );
-
-        // Get number of unread messages
-        const unreadMessagesCount = await Message.find({
-          chatId: chat.chatId,
-          sender: senderName,
-          read: false
-        }).count();
-
-        const data = { 
-          chat, 
-          newMessage, 
-          newTMessage: message, 
-          senderId,
-          unreadMessagesCount
-        };
-
-        if (recipientSocketId) {
-          io.to(recipientSocketId).emit('chat_restored', JSON.stringify(data));
-        } else {
-          // If recipient is offline, send silent push notification with data to update app state
-          if (deviceOS === 'ios') {
-            notification = new apn.Notification({
-              "aps": {
-                "content-available": "1",
-                "sound": ""
-              },
-              "topic": process.env.APP_ID,
-              "payload": {
-                "silent": true,
-                "type": "chat_restored",
-                "payload": JSON.stringify(data)
-              }
-            });
-            global.apnProvider.send(notification, deviceToken)
-              .then(response => {
-                // successful device tokens
-                console.log(response.sent);
-                // failed device tokens
-                console.log(response.failed);
-              });
-          }
-        }
-      }
 
       if (isFirstMessage) {
         const data = { newChat, newMessage };
@@ -224,6 +176,45 @@ export const onMessage = async (
           senderId,
           unreadMessagesCount
         };
+
+        // If chat has been deleted by sender, restore chat
+        const sender = await User.findOne({ _id: senderId });
+        if (sender.deletedChats.includes(chat._id)) {
+          await User.updateOne(
+            { _id: recipientId }, 
+            { 
+              $pull: { deletedChats: recipientId },
+              $addToSet: { chats: recipientId }
+            }
+          );
+
+          if (recipientSocketId) {
+            io.to(recipientSocketId).emit('chat_restored', JSON.stringify(data));
+          } else {
+            // If recipient is offline, send silent push notification with data to update app state
+            if (deviceOS === 'ios') {
+              notification = new apn.Notification({
+                "aps": {
+                  "content-available": "1",
+                  "sound": ""
+                },
+                "topic": process.env.APP_ID,
+                "payload": {
+                  "silent": true,
+                  "type": "chat_restored",
+                  "payload": JSON.stringify(data)
+                }
+              });
+              global.apnProvider.send(notification, deviceToken)
+                .then(response => {
+                  // successful device tokens
+                  console.log(response.sent);
+                  // failed device tokens
+                  console.log(response.failed);
+                });
+            }
+          }
+        }
 
         // Send new message to recipient and update chat
         // If recipient is online, emit socket event with data
