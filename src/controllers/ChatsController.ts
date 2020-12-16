@@ -95,9 +95,25 @@ const muteChat = async (req: Request, res: Response, next: NextFunction): Promis
       { $addToSet: { mutedChats: chatId } } :
       { $pull: { mutedChats: chatId } };
 
-    console.log(updateCondition)
-
     await User.updateOne({ _id: userId }, updateCondition);
+
+    res.status(200).send({ success: true });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const deleteChat = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  const { userId, _id } = req.body;
+
+  try {
+    await User.updateOne(
+      { _id: userId }, 
+      { 
+        $pull: { chats: _id },
+        $addToSet: { deletedChats: _id }
+      }
+    );
 
     res.status(200).send({ success: true });
   } catch (err) {
@@ -109,5 +125,6 @@ export default {
   getChats,
   getMessages,
   getMoreMessages,
-  muteChat
+  muteChat,
+  deleteChat
 };
