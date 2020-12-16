@@ -115,10 +115,66 @@ export const onMessage = async (
       if (users[recipientId]) {
         recipientSocketId = users[recipientId].id;
       }
+      
+      const recipient = await User.findOne({ _id: recipientId });
 
       // Check device OS to use approriate notification provider and get device token
-      const recipient = await User.findOne({ _id: recipientId });
       const { deviceOS, deviceToken } = recipient;
+
+      // If chat has been previously deleted by recipient, restore chat
+      if (recipient.deletedChats.includes(chat._id)) {
+        console.log('chat deleted, being restored')
+
+        await User.updateOne(
+          { _id: recipientId }, 
+          { 
+            $pull: { deletedChats: recipientId },
+            $addToSet: { chats: recipientId }
+          }
+        );
+
+        // Get number of unread messages
+        const unreadMessagesCount = await Message.find({
+          chatId: chat.chatId,
+          sender: senderName,
+          read: false
+        }).count();
+
+        const data = { 
+          chat, 
+          newMessage, 
+          newTMessage: message, 
+          senderId,
+          unreadMessagesCount
+        };
+
+        if (recipientSocketId) {
+          io.to(recipientSocketId).emit('chat_restored', JSON.stringify(data));
+        } else {
+          // If recipient is offline, send silent push notification with data to update app state
+          if (deviceOS === 'ios') {
+            notification = new apn.Notification({
+              "aps": {
+                "content-available": "1",
+                "sound": ""
+              },
+              "topic": process.env.APP_ID,
+              "payload": {
+                "silent": true,
+                "type": "chat_restored",
+                "payload": JSON.stringify(data)
+              }
+            });
+            global.apnProvider.send(notification, deviceToken)
+              .then(response => {
+                // successful device tokens
+                console.log(response.sent);
+                // failed device tokens
+                console.log(response.failed);
+              });
+          }
+        }
+      }
 
       if (isFirstMessage) {
         const data = { newChat, newMessage };

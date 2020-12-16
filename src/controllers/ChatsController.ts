@@ -105,11 +105,7 @@ const muteChat = async (req: Request, res: Response, next: NextFunction): Promis
 
 const deleteChat = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { userId, _id } = req.body;
-
-  console.log('on delete chat')
-  console.log(userId)
-  console.log(_id)
-
+  
   try {
     await User.updateOne(
       { _id: userId }, 
