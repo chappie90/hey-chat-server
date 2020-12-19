@@ -8,6 +8,8 @@ const Message = mongoose.model('Message');
 import { TChat } from '../types/index';
 import sendPushNotification from '../helpers/sendPushNotification';
 import sendSilentPushNotification from '../helpers/sendSilentPushNotification';
+import { addPendingContact } from './contactsHandlers';
+
 
 // User sends new message
 export const onMessage = async (
@@ -36,7 +38,7 @@ export const onMessage = async (
   // Private chat
   if (chatType === 'private') {
 
-    recipient = await User.findOne({ _id: recipientId }); 
+    recipient = await User.findOne({ _id: recipientId }).lean(); 
 
     if (isFirstMessage) { 
       // Create chat if first message
@@ -54,8 +56,8 @@ export const onMessage = async (
         { _id: recipientId },
         { $addToSet: { chats: newChat._id } }
       );
-
-      // Add contact to user's pending contacts
+       
+      // Add contact to user's pending contacts and add new chat
       await User.updateOne(
         { _id: senderId }, 
         { 
@@ -65,6 +67,10 @@ export const onMessage = async (
           }
         }
       );
+
+      // Add contacts to each other's channels
+      // Emit event to user with pending contact payload to update contacts list
+      addPendingContact(io, socket, users, senderId, recipient, chatId);
     } else {
       // Check if chat request accepted
       chat = await Chat.findOne({ chatId })
@@ -97,10 +103,7 @@ export const onMessage = async (
       }
 
       // If chat has been delete by recipient, block messages
-      if (recipient.deletedChats.includes(chat._id)) {
-        console.log('chat deleted, messages blocked')
-        return;
-      }
+      if (recipient.deletedChats.includes(chat._id)) return;
     }
 
   }
