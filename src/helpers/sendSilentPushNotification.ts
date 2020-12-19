@@ -10,15 +10,15 @@ const sendSilentPushNotification = async (
 
   if (deviceOS === 'ios') {
     notification = new apn.Notification({
-      "aps": {
-        "content-available": "1",
-        "sound": ""
+      "aps":{
+        "content-available":"1",
+        "sound":""
       },
-      "topic": process.env.APP_ID,
-      "payload": {
-        "silent": true,
-        "type": type,
-        "payload": JSON.stringify(data)
+      "topic":process.env.APP_ID,
+      "payload":{
+        "silent":true,
+        "type":type,
+        "payload":JSON.stringify(data)
       }
     });
     global.apnProvider.send(notification, deviceToken)
@@ -31,7 +31,23 @@ const sendSilentPushNotification = async (
   }
 
   if (deviceOS === 'android') {
-    
+    notification = {
+      "data":{
+        "silent":true,
+        "type":type,
+        "payload":JSON.stringify(data)
+      },
+      token:deviceToken
+    };
+
+    global.firebaseAdmin.messaging().send(notification)
+      .then((response) => {
+        // Response is a message ID string.
+        console.log('Successfully sent message:', response);
+      })
+      .catch((error) => {
+        console.log('Error sending message:', error);
+      });
   }
 };
 
