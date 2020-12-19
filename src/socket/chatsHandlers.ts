@@ -8,8 +8,6 @@ const Message = mongoose.model('Message');
 import { TChat } from '../types/index';
 import sendPushNotification from '../helpers/sendPushNotification';
 import sendSilentPushNotification from '../helpers/sendSilentPushNotification';
-import { addPendingContact } from './contactsHandlers';
-
 
 // User sends new message
 export const onMessage = async (
@@ -67,10 +65,6 @@ export const onMessage = async (
           }
         }
       );
-
-      // Add contacts to each other's channels
-      // Emit event to user with pending contact payload to update contacts list
-      addPendingContact(io, socket, users, senderId, recipient, chatId);
     } else {
       // Check if chat request accepted
       chat = await Chat.findOne({ chatId })
@@ -134,7 +128,13 @@ export const onMessage = async (
       const { deviceOS, deviceToken } = recipient;
 
       if (isFirstMessage) {
-        const data = { newChat, newMessage };
+        // Send pending contact object to sender
+        // Set contact as pending
+        recipient.pending = true;
+        // Set contact chat id
+        recipient.chatId = chatId;
+
+        const data = { newChat, newMessage, pendingContact: recipient };
 
         // Add new chat and send new message to recipient
         // If recipient is online, emit socket event with data
@@ -144,7 +144,8 @@ export const onMessage = async (
           // If recipient is offline, send silent push notification with data to update app state
           sendSilentPushNotification(deviceOS, deviceToken, data, 'first_message_received');
         }
-        // Add new chat, register chat id and send confirmation of message delivered to sender
+        // Add new chat, register chat id, add pendinding contact to sender's contacts list
+        // and send confirmation of message delivered to sender
         socket.emit('first_message_sent', JSON.stringify(data));
       } else {
         // Get number of unread messages
