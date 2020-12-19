@@ -5,7 +5,9 @@ import apn from 'apn';
 const User = mongoose.model('User');
 const Chat = mongoose.model('Chat');
 const Message = mongoose.model('Message');
-import { TChat, TContact } from '../types/index';
+import { TChat } from '../types/index';
+import sendPushNotification from '../helpers/sendPushNotification';
+import sendSilentPushNotification from '../helpers/sendSilentPushNotification';
 
 // User sends new message
 export const onMessage = async (
@@ -137,27 +139,7 @@ export const onMessage = async (
           io.to(recipientSocketId).emit('first_message_received', JSON.stringify(data));
         } else {
           // If recipient is offline, send silent push notification with data to update app state
-          if (deviceOS === 'ios') {
-            notification = new apn.Notification({
-              "aps": {
-                "content-available": "1",
-                "sound": ""
-              },
-              "topic": process.env.APP_ID,
-              "payload": {
-                "silent": true,
-                "type": "first_message_received",
-                "payload": JSON.stringify(data)
-              }
-            });
-            global.apnProvider.send(notification, deviceToken)
-              .then(response => {
-                // successful device tokens
-                console.log(response.sent);
-                // failed device tokens
-                console.log(response.failed);
-              });
-          }
+          sendSilentPushNotification(deviceOS, deviceToken, data, 'first_message_received');
         }
         // Add new chat, register chat id and send confirmation of message delivered to sender
         socket.emit('first_message_sent', JSON.stringify(data));
@@ -197,27 +179,7 @@ export const onMessage = async (
           io.to(recipientSocketId).emit('message_received', JSON.stringify(data));
         } else {
           // If recipient is offline, send silent push notification with data to update app state
-          if (deviceOS === 'ios') {
-            notification = new apn.Notification({
-              "aps": {
-                "content-available": "1",
-                "sound": ""
-              },
-              "topic": process.env.APP_ID,
-              "payload": {
-                "silent": true,
-                "type": "message_received",
-                "payload": JSON.stringify(data)
-              }
-            });
-            global.apnProvider.send(notification, deviceToken)
-              .then(response => {
-                // successful device tokens
-                console.log(response.sent);
-                // failed device tokens
-                console.log(response.failed);
-              });
-          }
+          sendSilentPushNotification(deviceOS, deviceToken, data, 'message_received');
         }
 
         // Send confirmation of message delivered to sender and update chat list
@@ -225,6 +187,7 @@ export const onMessage = async (
       }
 
       // Send push notification
+      // sendPushNotification(deviceOS, deviceToken);
       if (deviceOS === 'ios') {
         notification = new apn.Notification({
           "aps": {
@@ -315,27 +278,7 @@ export const onLikeMessage = async (
     const recipient = await User.findOne({ _id: recipientId });
     const { deviceOS, deviceToken } = recipient;
 
-    if (deviceOS === 'ios') {
-      const notification = new apn.Notification({
-        "aps": {
-          "content-available": "1",
-          "sound": ""
-        },
-        "topic": process.env.APP_ID,
-        "payload": {
-          "silent": true,
-          "type": "message_liked",
-          "payload": JSON.stringify(response)
-        }
-      });
-      global.apnProvider.send(notification, deviceToken)
-        .then(response => {
-          // successful device tokens
-          console.log(response.sent);
-          // failed device tokens
-          console.log(response.failed);
-        });
-    }
+    sendSilentPushNotification(deviceOS, deviceToken, response, 'message_liked');
   }
 };
 
@@ -362,27 +305,7 @@ export const onDeleteMessage = async (
     const recipient = await User.findOne({ _id: recipientId });
     const { deviceOS, deviceToken } = recipient;
 
-    if (deviceOS === 'ios') {
-      const notification = new apn.Notification({
-        "aps": {
-          "content-available": "1",
-          "sound": ""
-        },
-        "topic": process.env.APP_ID,
-        "payload": {
-          "silent": true,
-          "type": "message_deleted",
-          "payload": JSON.stringify(response)
-        }
-      });
-      global.apnProvider.send(notification, deviceToken)
-        .then(response => {
-          // successful device tokens
-          console.log(response.sent);
-          // failed device tokens
-          console.log(response.failed);
-        });
-    }
+    sendSilentPushNotification(deviceOS, deviceToken, response, 'message_deleted');
   }
 };
 
@@ -411,27 +334,7 @@ export const onMarkAllMessagesAsRead = async (
     const sender = await User.findOne({ _id: senderId });
     const { deviceOS, deviceToken } = sender;
 
-    if (deviceOS === 'ios') {
-      const notification = new apn.Notification({
-        "aps": {
-          "content-available": "1",
-          "sound": ""
-        },
-        "topic": process.env.APP_ID,
-        "payload": {
-          "silent": true,
-          "type": "messages_marked_as_read_sender",
-          "payload": JSON.stringify(response)
-        }
-      });
-      global.apnProvider.send(notification, deviceToken)
-        .then(response => {
-          // successful device tokens
-          console.log(response.sent);
-          // failed device tokens
-          console.log(response.failed);
-        });
-    }
+    sendSilentPushNotification(deviceOS, deviceToken, response, 'messages_marked_as_read_sender');
   }
 };
 
