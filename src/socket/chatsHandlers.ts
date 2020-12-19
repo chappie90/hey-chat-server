@@ -191,63 +191,8 @@ export const onMessage = async (
       }
 
       // Send push notification
-      // sendPushNotification(deviceOS, deviceToken);
-      if (deviceOS === 'ios') {
-        notification = new apn.Notification({
-          "aps": {
-            "alert": {
-              "title": "New message received",
-              "body": "Hi! How's it going?",
-              "sound": "default"
-            },
-            "badge": 1
-          },
-          "topic": process.env.APP_ID,
-          "payload": {
-            "payload": JSON.stringify(data)
-          }
-        });
-        global.apnProvider.send(notification, deviceToken)
-          .then( response => {
-            // successful device tokens
-            console.log(response.sent);
-            // failed device tokens
-            console.log(response.failed);
-          });
-      }
-      if (deviceOS === 'android') {
-        notification = {
-          // "notification": {
-          //   "title": 'Some title',
-          //   "body": 'Test message body'
-          // },
-          "android":{
-            "notification":{
-               "body":"Very good news",
-               "title":"Good news",
-               "sound":"default"
-            }
-         },
-          "data": {
-            "key_1" : "Value_1",
-            "key_2" : "Value_2",
-            "key_3" : "Value_3"
-          },
-          token: deviceToken
-          // topic: 'general'
-        };
-
-        global.firebaseAdmin.messaging().send(notification)
-          .then((response) => {
-            // Response is a message ID string.
-            console.log('Successfully sent message:', response);
-          })
-          .catch((error) => {
-            console.log('Error sending message:', error);
-          });
-      } 
+      sendPushNotification(deviceOS, deviceToken, senderName, message.text);
     }
-
   }
 };
 
