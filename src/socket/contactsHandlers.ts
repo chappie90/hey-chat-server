@@ -16,7 +16,8 @@ export const getContacts = async (
 
   try {
     const chats = [ ...user.chats, ...user.deletedChats ];
-    const pendingContacts: TContact[] = user.pendingContacts.map((pC: TContact) => ({ ...pC, pending: true }));
+    // Pending contacts will always show as offline
+    const pendingContacts: TContact[] = user.pendingContacts.map((pC: TContact) => ({ ...pC, pending: true, online: false }));
     const contacts: TContact[] = [ ...pendingContacts, ...user.contacts ];
 
     for (const contact of contacts) {
@@ -26,7 +27,7 @@ export const getContacts = async (
 
       // Identify contacts who are online
       const contactId = contact._id.toString();
-      if (contactId in users) {
+      if (!contact.pending && contactId in users) {
         contact.online =  true;
 
         onlineContacts.push(contact);
