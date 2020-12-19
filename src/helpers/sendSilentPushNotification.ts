@@ -32,10 +32,12 @@ const sendSilentPushNotification = async (
 
   if (deviceOS === 'android') {
     notification = {
-      "data":{
-        "silent":true,
-        "type":type,
-        "payload":JSON.stringify(data)
+      "android":{
+        "data":{
+          "silent":true,
+          "type":type,
+          "payload":JSON.stringify(data)
+        },
       },
       token:deviceToken
     };

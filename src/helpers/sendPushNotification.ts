@@ -33,7 +33,8 @@ const sendPushNotification = async (
         "notification":{
           "title":title,
           "body":body, 
-          "sound":"default"
+          "sound":"default",
+          // "icon":
         }
       },
       token:deviceToken
