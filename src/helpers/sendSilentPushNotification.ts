@@ -30,30 +30,17 @@ const sendSilentPushNotification = async (
       });
   }
 
-  // if (deviceOS === 'android') {
-  //   notification = {
-  //     data:{
-  //       silent:true,
-  //       type:type,
-  //       payload:JSON.stringify(data)
-  //     },
-  //     token:deviceToken,
-  //     priority:"high"
-  //   };
-  // }
-
   if (deviceOS === 'android') {
     notification = {
       "android":{
-        "notification":{
-          "title":'Some text ',
-          "body":'Some body', 
-          "sound":"default",
-          // "icon":
+        "priority":"high",
+        "data":{
+          "silent":true,
+          "type":type,
+          "payload":JSON.stringify(data)
         }
       },
-      token:deviceToken,
-      priority:"high"
+      token:deviceToken
     };
 
     global.firebaseAdmin.messaging().send(notification)
