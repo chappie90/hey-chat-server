@@ -8,12 +8,6 @@ const sendSilentPushNotification = async (
 ): Promise<void> => {
   let notification;
 
-  console.log('sending silent push notification')
-  console.log(deviceOS)
-  console.log(deviceToken)
-  console.log(data)
-  console.log(type)
-
   if (deviceOS === 'ios') {
     notification = new apn.Notification({
       "aps":{
@@ -46,8 +40,8 @@ const sendSilentPushNotification = async (
           "payload":JSON.stringify(data)
         },
       },
-      token:deviceToken,
-      priority:"high"
+      "token":deviceToken,
+      "priority":"high"
     };
 
     global.firebaseAdmin.messaging().send(notification)
