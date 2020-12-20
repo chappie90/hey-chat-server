@@ -141,7 +141,7 @@ export const onMessage = async (
           io.to(recipientSocketId).emit('first_message_received', JSON.stringify(data));
         } else {
           // If recipient is offline, send silent push notification with data to update app state
-          // sendSilentPushNotification(deviceOS, deviceToken, data, 'first_message_received');
+          sendSilentPushNotification(deviceOS, deviceToken, data, 'first_message_received');
         }
         // Add new chat, register chat id, add pendinding contact to sender's contacts list
         // and send confirmation of message delivered to sender
