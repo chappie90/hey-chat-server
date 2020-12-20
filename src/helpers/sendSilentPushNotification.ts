@@ -32,26 +32,25 @@ const sendSilentPushNotification = async (
 
   if (deviceOS === 'android') {
     notification = {
-      "android":{
-        "data":{
-          "silent":true,
-          "type":type,
-          "payload":JSON.stringify(data)
-        },
+      data:{
+        silent:true,
+        type:type,
+        payload:JSON.stringify(data)
       },
-      "token":deviceToken,
-      "priority":"high"
+      token:deviceToken,
+      priority:"high"
     };
-    console.log(notification)
 
-    // global.firebaseAdmin.messaging().send(notification)
-    //   .then((response) => {
-    //     // Response is a message ID string.
-    //     console.log('Successfully sent message:', response);
-    //   })
-    //   .catch((error) => {
-    //     console.log('Error sending message:', error);
-    //   });
+    console.log(global.firebaseAdmin)
+
+    global.firebaseAdmin.messaging().send(notification)
+      .then((response) => {
+        // Response is a message ID string.
+        console.log('Successfully sent message:', response);
+      })
+      .catch((error) => {
+        console.log('Error sending message:', error);
+      });
   }
 };
 
