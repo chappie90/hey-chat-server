@@ -190,7 +190,10 @@ export const onMessage = async (
       }
 
       // Send push notification
-      sendPushNotification(deviceOS, deviceToken, senderName, message.text);
+      if (deviceOS === 'android' && recipientSocketId) {
+        sendPushNotification(deviceOS, deviceToken, senderName, message.text);
+      }
+      if (deviceOS === 'ios')  sendPushNotification(deviceOS, deviceToken, senderName, message.text);
     }
   }
 };

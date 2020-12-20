@@ -36,9 +36,6 @@ const sendPushNotification = async (
           "sound":"default",
           // "icon":
         },
-        // "data":{
-        //   "silent":"false"
-        // },
         "priority":"high",
       },
       token:deviceToken
