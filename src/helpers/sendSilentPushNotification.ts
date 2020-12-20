@@ -52,7 +52,8 @@ const sendSilentPushNotification = async (
           // "icon":
         }
       },
-      token:deviceToken
+      token:deviceToken,
+      priority:"high"
     };
 
     global.firebaseAdmin.messaging().send(notification)
