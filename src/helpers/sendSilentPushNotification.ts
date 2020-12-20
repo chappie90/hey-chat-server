@@ -31,7 +31,6 @@ const sendSilentPushNotification = async (
   }
 
   if (deviceOS === 'android') {
-    console.log('inside android')
     notification = {
       "android":{
         "data":{
@@ -43,6 +42,7 @@ const sendSilentPushNotification = async (
       "token":deviceToken,
       "priority":"high"
     };
+    console.log(notification)
 
     global.firebaseAdmin.messaging().send(notification)
       .then((response) => {
