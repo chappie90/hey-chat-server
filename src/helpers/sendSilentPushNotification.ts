@@ -44,14 +44,14 @@ const sendSilentPushNotification = async (
     };
     console.log(notification)
 
-    global.firebaseAdmin.messaging().send(notification)
-      .then((response) => {
-        // Response is a message ID string.
-        console.log('Successfully sent message:', response);
-      })
-      .catch((error) => {
-        console.log('Error sending message:', error);
-      });
+    // global.firebaseAdmin.messaging().send(notification)
+    //   .then((response) => {
+    //     // Response is a message ID string.
+    //     console.log('Successfully sent message:', response);
+    //   })
+    //   .catch((error) => {
+    //     console.log('Error sending message:', error);
+    //   });
   }
 };
 
