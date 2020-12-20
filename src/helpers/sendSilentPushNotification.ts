@@ -32,12 +32,15 @@ const sendSilentPushNotification = async (
 
   if (deviceOS === 'android') {
     notification = {
-      "data":{
-        "silent":true,
-        "type":type,
-        "payload":JSON.stringify(data)
+      "android":{
+        "data":{
+          "silent":true,
+          "type":type,
+          "payload":JSON.stringify(data)
+        },
       },
-      token:deviceToken
+      token:deviceToken,
+      priority:"high"
     };
 
     global.firebaseAdmin.messaging().send(notification)
