@@ -8,6 +8,12 @@ const sendSilentPushNotification = async (
 ): Promise<void> => {
   let notification;
 
+  console.log('sending silent push notification')
+  console.log(deviceOS)
+  console.log(deviceToken)
+  console.log(data)
+  console.log(type)
+
   if (deviceOS === 'ios') {
     notification = new apn.Notification({
       "aps":{
@@ -31,6 +37,7 @@ const sendSilentPushNotification = async (
   }
 
   if (deviceOS === 'android') {
+    console.log('inside android')
     notification = {
       "android":{
         "data":{
