@@ -37,7 +37,7 @@ const sendSilentPushNotification = async (
         "data":{
           "silent":"true",
           "type":type,
-          // "payload":JSON.stringify(data)
+          "payload":JSON.stringify(data)
         }
       },
       token:deviceToken
