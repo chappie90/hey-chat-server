@@ -30,12 +30,24 @@ const sendSilentPushNotification = async (
       });
   }
 
+  // if (deviceOS === 'android') {
+  //   notification = {
+  //     data:{
+  //       silent:true,
+  //       type:type,
+  //       payload:JSON.stringify(data)
+  //     },
+  //     token:deviceToken,
+  //     priority:"high"
+  //   };
+  // }
+
   if (deviceOS === 'android') {
     notification = {
       "android":{
         "notification":{
-          "title":"dsada",
-          "body":"dasdsa", 
+          "title":title,
+          "body":body, 
           "sound":"default",
           // "icon":
         }
