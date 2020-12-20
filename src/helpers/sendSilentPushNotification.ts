@@ -46,8 +46,8 @@ const sendSilentPushNotification = async (
     notification = {
       "android":{
         "notification":{
-          "title":title,
-          "body":body, 
+          "title":'Some text ',
+          "body":'Some body', 
           "sound":"default",
           // "icon":
         }
