@@ -114,6 +114,9 @@ export const onMessage = async (
   });
   await newMessage.save();
 
+  console.log('new message')
+  console.log(newMessage)
+
   // If new message created successfully
   if (newMessage) {
 
