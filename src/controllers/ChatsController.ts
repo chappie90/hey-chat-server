@@ -62,6 +62,9 @@ const getMessages = async (req: Request, res: Response, next: NextFunction): Pro
     
     const allMessagesLoaded = messages.length < 20 ? true : false;
 
+    console.log('get messages')
+    console.log(messages)
+
     res.status(200).send({ messages, allMessagesLoaded });
   } catch (err) {
     next(err);

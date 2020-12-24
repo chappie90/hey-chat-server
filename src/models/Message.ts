@@ -34,7 +34,7 @@ const messageSchema = new mongoose.Schema({
     }
   },
   reply: { 
-    origMsgId: Number,
+    origMsgId: String,
     origMsgText: String,
     origMsgSender: String
   },

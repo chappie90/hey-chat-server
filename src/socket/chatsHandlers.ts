@@ -109,7 +109,8 @@ export const onMessage = async (
       id: message._id,
       text: message.text,
       createDate: message.createDate
-    }
+    },
+    reply: message.reply
   });
   await newMessage.save();
 
