@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 const mongoose = require('mongoose');
 import fs from 'fs';
+import aws from 'aws-sdk';
 
 const User = mongoose.model('User');
 import convertImage from '../helpers/convertImage';
@@ -23,6 +24,28 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
   try {
     const image = req.file;
     const userId = req.body.userId;
+
+    // UPLOAD TO AWS
+    const uploadFileS3Bucket = async (file: any, filename: string): Promise<void> => {
+      const params = {
+        Bucket: process.env.S3_BUCKET_NAME,
+        Key: filename,
+        Body: file,
+        ContentType: file.mimetype
+      };
+
+      global.s3.upload(params, (err, data) => {
+        if (err) {
+          console.log(err);
+          next(err);
+        }
+        console.log('Profile image uploaded successfully to S3');
+        console.log(data);
+        console.log(data.Location)
+      });
+    };
+
+    uploadFileS3Bucket(req.file, req.file.filename);
 
     let imageNameOriginal: string;
 

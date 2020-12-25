@@ -52,6 +52,7 @@ aws.config.update({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
 });
 const s3 = new aws.S3();
+(global as any).s3 = s3;
 
 (async () => {
   try {

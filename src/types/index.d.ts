@@ -5,6 +5,7 @@ declare global {
       appRoot: string;
       apnProvider: any;
       firebaseAdmin: any;
+      s3: any;
     }
   }
 }
