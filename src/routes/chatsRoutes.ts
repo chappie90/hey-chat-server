@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import multer from 'multer';
 
-import processUploads from '../middleware/processUploads';
+import { memoryStorage } from '../middleware/processUploads';
 import ChatsCtrl from '../controllers/ChatsController';
 
 const router = Router();
@@ -13,7 +13,7 @@ router.patch('/api/chat/mute', ChatsCtrl.muteChat);
 router.patch('/api/chat/delete', ChatsCtrl.deleteChat);
 router.post(
   '/api/messages/image/upload', 
-  multer({ storage: processUploads('chat') }).single('messageImage')
+  multer({ storage: memoryStorage() }).single('messageImage')
 );
 
 export default router;
