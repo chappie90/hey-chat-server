@@ -29,7 +29,10 @@ const memoryStorage = () => {
   return multer.memoryStorage();
 };
 
+const transformFileName = (file: any) => `${file.originalname}_${Date.now()}.${MIME_TYPE[file.mimetype]}`;
+
 export {
   diskStorage,
-  memoryStorage
+  memoryStorage,
+  transformFileName
 };

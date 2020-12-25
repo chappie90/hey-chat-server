@@ -6,6 +6,7 @@ const User = mongoose.model('User');
 import convertImage from '../helpers/convertImage';
 import resizeImage from '../helpers/resizeImage';
 import uploadFileS3 from '../helpers/uploadFileS3';
+import { transformFileName } from '../middleware/processUploads';
 
 const getImage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -21,17 +22,13 @@ const getImage = async (req: Request, res: Response, next: NextFunction): Promis
 };
 
 const uploadImage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  console.log('my buffer')
-  console.log(req.file.buffer)
-  console.log('file')
-  console.log(req.file)
-
   try { 
+    console.log(req.file)
+
     const imageFile = req.file;
     const bufferOriginal = req.file.buffer;
+    const imageNameOriginal = transformFileName(imageFile);
     const userId = req.body.userId;
-    
-    let imageNameOriginal: string;
 
     const profileImgFolder = 'public/uploads/profile';
 
@@ -77,7 +74,7 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
     // UPLOAD TO AWS S3 bucket
     uploadFileS3(
       bufferOriginal,
-      imageFile.filename, 
+      imageNameOriginal, 
       imageFile.mimetype, 
       `${profileImgFolder}/original`, 
       next
