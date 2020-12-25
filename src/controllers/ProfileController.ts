@@ -27,19 +27,20 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
   console.log(req.file)
 
   try { 
-  //   const image = req.file;
-  //   const userId = req.body.userId;
+    const imageFile = req.file;
+    const bufferOriginal = req.file.buffer;
+    const userId = req.body.userId;
     
-  //   let imageNameOriginal: string;
+    let imageNameOriginal: string;
 
-  //   const profileImgFolder = 'public/uploads/profile';
+    const profileImgFolder = 'public/uploads/profile';
 
-  //   let splitNameParts = image.filename.split('.');
-  //   let fileExt = splitNameParts[splitNameParts.length - 1];
-  //   splitNameParts.pop();
-  //   const joinNameParts = splitNameParts.join('');
+    // let splitNameParts = image.filename.split('.');
+    // let fileExt = splitNameParts[splitNameParts.length - 1];
+    // splitNameParts.pop();
+    // const joinNameParts = splitNameParts.join('');
 
-  //   imageNameOriginal = image.filename;
+    // imageNameOriginal = image.filename;
 
   //   // Convert heic / heif images to jpg because jimp doesn't support format
   //   if (fileExt === 'heic' || fileExt === 'heif') {
@@ -73,14 +74,14 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
   //     bufferOutput: bufferMedium
   //   } = await resizeImage(imageNameOriginal, 'profile', 'medium', next);
 
-  //   // UPLOAD TO AWS S3 bucket
-  //   uploadFileS3(
-  //     Buffer.from(req.file.filename, 'binary'), 
-  //     imageNameOriginal, 
-  //     image.mimetype, 
-  //     `${profileImgFolder}/original`, 
-  //     next
-  //   );
+    // UPLOAD TO AWS S3 bucket
+    uploadFileS3(
+      bufferOriginal,
+      imageFile.filename, 
+      imageFile.mimetype, 
+      `${profileImgFolder}/original`, 
+      next
+    );
   //   uploadFileS3(bufferSmall, imageNameSmall, image.mimetype,`${profileImgFolder}/small`, next);
   //   uploadFileS3(bufferMedium, imageNameMedium, image.mimetype, `${profileImgFolder}/medium`, next);
 
