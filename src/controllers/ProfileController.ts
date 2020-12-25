@@ -24,16 +24,13 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
   try {
     const image = req.file;
     const userId = req.body.userId;
-
-    console.log('file')
-    console.log(req.file)
-
+    
     // UPLOAD TO AWS
     const uploadFileS3Bucket = async (file: any, filename: string): Promise<void> => {
       const params = {
         Bucket: process.env.S3_BUCKET_NAME,
         Key: filename,
-        Body: file.buffer,
+        Body: Buffer.from(image, 'binary'),
         ContentType: file.mimetype
       };
 
