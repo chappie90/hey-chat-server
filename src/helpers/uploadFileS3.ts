@@ -7,6 +7,7 @@ const uploadFileS3 = async (
   destinationFolder: string,
   next: NextFunction
 ): Promise<void> => {
+  
   const params = {
     Bucket: process.env.S3_BUCKET_NAME,
     Key: `${destinationFolder}/${filename}`,

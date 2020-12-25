@@ -29,10 +29,17 @@ const memoryStorage = () => {
   return multer.memoryStorage();
 };
 
-const transformFileName = (file: any) => `${file.originalname}_${Date.now()}.${MIME_TYPE[file.mimetype]}`;
+const transformImageName = (file: any, imageSize?: string) => {
+  if (imageSize) {
+    return `${file.originalname}_${Date.now()}_${imageSize}.${MIME_TYPE[file.mimetype]}`;
+  } else {
+    return `${file.originalname}_${Date.now()}.${MIME_TYPE[file.mimetype]}`;
+  }
+
+};
 
 export {
   diskStorage,
   memoryStorage,
-  transformFileName
+  transformImageName
 };

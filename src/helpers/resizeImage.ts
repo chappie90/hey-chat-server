@@ -1,38 +1,39 @@
+import { NextFunction } from 'express';
 import Jimp from 'jimp';
 
 const resizeImage = async (
-  imageName: string, 
-  destinationFolder: string,
-  outputSize: string
-): Promise<string> => {
-  const uploadsFolder = `${global.appRoot}/public/uploads`;;
+  bufferInput: Buffer,
+  mimeType: string,
+  outputSize: string,
+  next: NextFunction
+): Promise<Buffer> => {
 
-  let outputDimensions: number[];
+  let outputDimensions: number[],
+      bufferOutput: Buffer;
 
   if (outputSize === 'small') {
     outputDimensions = [120, 120];
   } else if (outputSize === 'medium') {
     outputDimensions = [400, 400];
   }
-  
-  let splitNameParts = imageName.split('.');
-  const fileExt = splitNameParts[splitNameParts.length - 1];
-  splitNameParts.pop();
-  const joinNameParts = splitNameParts.join('');
-  const resizedImageName = `${joinNameParts}_${outputSize}.${fileExt}`;
 
-  const originalImagePath = `${uploadsFolder}/${destinationFolder}/original/${imageName}`;
-
-  await Jimp.read(originalImagePath)
+  await Jimp.read(bufferInput)
     .then(file => {
       return file
         .cover(outputDimensions[0], outputDimensions[1])
         .quality(60)
-        .write(`${uploadsFolder}/${destinationFolder}/${outputSize}/${resizedImageName}`)
+        .getBuffer(mimeType, (err, buffer) => {
+          if (err) {
+            console.log(err);
+            next(err);
+            return;
+          }
+          bufferOutput = buffer
+        });
     })
     .catch(err => console.log(err));
 
-  return resizedImageName;
+  return bufferOutput; 
 };
 
 export default resizeImage;

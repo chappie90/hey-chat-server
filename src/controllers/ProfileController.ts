@@ -6,7 +6,7 @@ const User = mongoose.model('User');
 import convertImage from '../helpers/convertImage';
 import resizeImage from '../helpers/resizeImage';
 import uploadFileS3 from '../helpers/uploadFileS3';
-import { transformFileName } from '../middleware/processUploads';
+import { transformImageName } from '../middleware/processUploads';
 
 const getImage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -23,21 +23,15 @@ const getImage = async (req: Request, res: Response, next: NextFunction): Promis
 
 const uploadImage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try { 
-    console.log(req.file)
-
     const imageFile = req.file;
     const bufferOriginal = req.file.buffer;
-    const imageNameOriginal = transformFileName(imageFile);
+    const mimeType = req.file.mimetype;
+    const imageNameOriginal = transformImageName(imageFile);
+    const imageNameSmall = transformImageName(imageFile, 'small');
+    const imageNameMedium = transformImageName(imageFile, 'medium');
     const userId = req.body.userId;
 
     const profileImgFolder = 'public/uploads/profile';
-
-    // let splitNameParts = image.filename.split('.');
-    // let fileExt = splitNameParts[splitNameParts.length - 1];
-    // splitNameParts.pop();
-    // const joinNameParts = splitNameParts.join('');
-
-    // imageNameOriginal = image.filename;
 
   //   // Convert heic / heif images to jpg because jimp doesn't support format
   //   if (fileExt === 'heic' || fileExt === 'heif') {
@@ -61,28 +55,20 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
   //     }
   //   }
 
-  //   // Create different size versions of original image and get buffer output and new image names
-  //   const { 
-  //     resizedImageName: imageNameSmall, 
-  //     bufferOutput: bufferSmall 
-  //   } = await resizeImage(imageNameOriginal, 'profile', 'small', next);
-  //   const { 
-  //     resizedImageName: imageNameMedium,
-  //     bufferOutput: bufferMedium
-  //   } = await resizeImage(imageNameOriginal, 'profile', 'medium', next);
+    // Create different size versions of original image 
+    // Returns buffer output
+    const bufferSmall = await resizeImage(bufferOriginal, mimeType, 'small', next);
+    const bufferMedium = await resizeImage(bufferOriginal, mimeType, 'medium', next);
 
-    // UPLOAD TO AWS S3 bucket
-    uploadFileS3(
-      bufferOriginal,
-      imageNameOriginal, 
-      imageFile.mimetype, 
-      `${profileImgFolder}/original`, 
-      next
-    );
-  //   uploadFileS3(bufferSmall, imageNameSmall, image.mimetype,`${profileImgFolder}/small`, next);
-  //   uploadFileS3(bufferMedium, imageNameMedium, image.mimetype, `${profileImgFolder}/medium`, next);
+    // Upload TO AWS S3 bucket
+    // Returns bucket image path
+    await uploadFileS3(bufferOriginal, imageNameOriginal, mimeType, `${profileImgFolder}/original`, next);
+    await uploadFileS3(bufferSmall, imageNameSmall, mimeType,`${profileImgFolder}/small`, next);
+    await uploadFileS3(bufferMedium, imageNameMedium, mimeType, `${profileImgFolder}/medium`, next);
 
-  //   const user = await User.findOne({ _id: userId });
+    console.log('controller waited for s3 upload')
+
+    // const user = await User.findOne({ _id: userId });
 
   //   const pathToFiles = [
   //     `${global.appRoot}/${user.profile.image.original.path}`,
@@ -90,25 +76,25 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
   //     `${global.appRoot}/${user.profile.image.medium.path}`
   //   ];
 
-  //   await User.updateOne(
-  //     { _id: userId },
-  //     { profile: {
-  //       image: {
-  //         original: {
-  //           name: imageNameOriginal,
-  //           path: `${profileImgFolder}/original/${imageNameOriginal}`
-  //         },
-  //         small: {
-  //           name: imageNameSmall,
-  //           path: `${profileImgFolder}/small/${imageNameSmall}`
-  //         },
-  //         medium: {
-  //           name: imageNameMedium,
-  //           path: `${profileImgFolder}/medium/${imageNameMedium}`
-  //         }
-  //       }
-  //     } }
-  //   );
+    await User.updateOne(
+      { _id: userId },
+      { profile: {
+        image: {
+          original: {
+            name: imageNameOriginal,
+            path: `${process.env.S3_DATA_URL}/${profileImgFolder}/original/${imageNameOriginal}`
+          },
+          small: {
+            name: imageNameSmall,
+            path: `${process.env.S3_DATA_URL}/${profileImgFolder}/small/${imageNameSmall}`
+          },
+          medium: {
+            name: imageNameMedium,
+            path: `${process.env.S3_DATA_URL}/${profileImgFolder}/medium/${imageNameMedium}`
+          }
+        }
+      } }
+    );
 
   //   // Delete old profile images
   //   for (let image of pathToFiles) {
@@ -123,7 +109,9 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
   //   }
       res.status(200).send({ success: true });
 
-    // res.status(200).send({ profileImage: `${profileImgFolder}/medium/${imageNameMedium}` }); 
+    res.status(200).send({ 
+      profileImage: `${process.env.S3_DATA_URL}/${profileImgFolder}/medium/${imageNameMedium}` 
+    }); 
   } catch (err) {
     console.log(err);
     next(err);
