@@ -30,7 +30,7 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
       const params = {
         Bucket: process.env.S3_BUCKET_NAME,
         Key: filename,
-        Body: file,
+        Body: file.buffer,
         ContentType: file.mimetype
       };
 
@@ -38,6 +38,7 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
         if (err) {
           console.log(err);
           next(err);
+          return;
         }
         console.log('Profile image uploaded successfully to S3');
         console.log(data);
