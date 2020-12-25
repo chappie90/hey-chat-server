@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 const mongoose = require('mongoose');
 import fs from 'fs';
-import aws from 'aws-sdk';
 
 const User = mongoose.model('User');
 import convertImage from '../helpers/convertImage';
 import resizeImage from '../helpers/resizeImage';
+import uploadFileS3 from '../helpers/uploadFileS3';
 
 const getImage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -21,111 +21,111 @@ const getImage = async (req: Request, res: Response, next: NextFunction): Promis
 };
 
 const uploadImage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    const image = req.file;
-    const userId = req.body.userId;
+  console.log('my buffer')
+  console.log(req.file.buffer)
+  console.log('file')
+  console.log(req.file)
+
+  try { 
+  //   const image = req.file;
+  //   const userId = req.body.userId;
     
-    // UPLOAD TO AWS
-    const uploadFileS3Bucket = async (file: any, filename: string): Promise<void> => {
-      const params = {
-        Bucket: process.env.S3_BUCKET_NAME,
-        Key: filename,
-        Body: Buffer.from(image.filename, 'binary'),
-        ContentType: file.mimetype
-      };
+  //   let imageNameOriginal: string;
 
-      global.s3.upload(params, (err, data) => {
-        if (err) {
-          console.log(err);
-          next(err);
-          return;
-        }
-        console.log('Profile image uploaded successfully to S3');
-        console.log(data);
-        console.log(data.Location)
-      });
-    };
+  //   const profileImgFolder = 'public/uploads/profile';
 
-    uploadFileS3Bucket(req.file, req.file.filename);
+  //   let splitNameParts = image.filename.split('.');
+  //   let fileExt = splitNameParts[splitNameParts.length - 1];
+  //   splitNameParts.pop();
+  //   const joinNameParts = splitNameParts.join('');
 
-    let imageNameOriginal: string;
+  //   imageNameOriginal = image.filename;
 
-    const profileImgFolder = 'public/uploads/profile';
+  //   // Convert heic / heif images to jpg because jimp doesn't support format
+  //   if (fileExt === 'heic' || fileExt === 'heif') {
+  //     const originalImgPath = `${global.appRoot}/${profileImgFolder}/original/${imageNameOriginal}`;
 
-    let splitNameParts = image.filename.split('.');
-    let fileExt = splitNameParts[splitNameParts.length - 1];
-    splitNameParts.pop();
-    const joinNameParts = splitNameParts.join('');
+  //     await convertImage(
+  //       originalImgPath,
+  //       `${global.appRoot}/${profileImgFolder}/original/${joinNameParts}.jpg`
+  //     );
 
-    imageNameOriginal = image.filename;
+  //     imageNameOriginal = `${joinNameParts}.jpg`;
 
-    // Convert heic / heif images to jpg because jimp doesn't support format
-    if (fileExt === 'heic' || fileExt === 'heif') {
-      const originalImgPath = `${global.appRoot}/${profileImgFolder}/original/${imageNameOriginal}`;
+  //      // Delete original heic / heif file
+  //     if (fs.existsSync(originalImgPath)) {
+  //       fs.unlink(originalImgPath, (err) => {
+  //         if (err) {
+  //           console.log(err);
+  //           next(err);
+  //         }
+  //       });
+  //     }
+  //   }
 
-      await convertImage(
-        originalImgPath,
-        `${global.appRoot}/${profileImgFolder}/original/${joinNameParts}.jpg`
-      );
+  //   // Create different size versions of original image and get buffer output and new image names
+  //   const { 
+  //     resizedImageName: imageNameSmall, 
+  //     bufferOutput: bufferSmall 
+  //   } = await resizeImage(imageNameOriginal, 'profile', 'small', next);
+  //   const { 
+  //     resizedImageName: imageNameMedium,
+  //     bufferOutput: bufferMedium
+  //   } = await resizeImage(imageNameOriginal, 'profile', 'medium', next);
 
-      imageNameOriginal = `${joinNameParts}.jpg`;
+  //   // UPLOAD TO AWS S3 bucket
+  //   uploadFileS3(
+  //     Buffer.from(req.file.filename, 'binary'), 
+  //     imageNameOriginal, 
+  //     image.mimetype, 
+  //     `${profileImgFolder}/original`, 
+  //     next
+  //   );
+  //   uploadFileS3(bufferSmall, imageNameSmall, image.mimetype,`${profileImgFolder}/small`, next);
+  //   uploadFileS3(bufferMedium, imageNameMedium, image.mimetype, `${profileImgFolder}/medium`, next);
 
-       // Delete original heic / heif file
-      if (fs.existsSync(originalImgPath)) {
-        fs.unlink(originalImgPath, (err) => {
-          if (err) {
-            console.log(err);
-            next(err);
-          }
-        });
-      }
-    }
+  //   const user = await User.findOne({ _id: userId });
 
-    // Create different size versions of original image
-    const imageNameSmall = await resizeImage(imageNameOriginal, 'profile', 'small');
-    const imageNameMedium = await resizeImage(imageNameOriginal, 'profile', 'medium');
+  //   const pathToFiles = [
+  //     `${global.appRoot}/${user.profile.image.original.path}`,
+  //     `${global.appRoot}/${user.profile.image.small.path}`,
+  //     `${global.appRoot}/${user.profile.image.medium.path}`
+  //   ];
 
-    const user = await User.findOne({ _id: userId });
+  //   await User.updateOne(
+  //     { _id: userId },
+  //     { profile: {
+  //       image: {
+  //         original: {
+  //           name: imageNameOriginal,
+  //           path: `${profileImgFolder}/original/${imageNameOriginal}`
+  //         },
+  //         small: {
+  //           name: imageNameSmall,
+  //           path: `${profileImgFolder}/small/${imageNameSmall}`
+  //         },
+  //         medium: {
+  //           name: imageNameMedium,
+  //           path: `${profileImgFolder}/medium/${imageNameMedium}`
+  //         }
+  //       }
+  //     } }
+  //   );
 
-    const pathToFiles = [
-      `${global.appRoot}/${user.profile.image.original.path}`,
-      `${global.appRoot}/${user.profile.image.small.path}`,
-      `${global.appRoot}/${user.profile.image.medium.path}`
-    ];
+  //   // Delete old profile images
+  //   for (let image of pathToFiles) {
+  //     if (fs.existsSync(image)) {
+  //       fs.unlink(image, (err) => {
+  //         if (err) {
+  //           console.log(err);
+  //           next(err);
+  //         }
+  //       });
+  //     }
+  //   }
+      res.status(200).send({ success: true });
 
-    await User.updateOne(
-      { _id: userId },
-      { profile: {
-        image: {
-          original: {
-            name: imageNameOriginal,
-            path: `${profileImgFolder}/original/${imageNameOriginal}`
-          },
-          small: {
-            name: imageNameSmall,
-            path: `${profileImgFolder}/small/${imageNameSmall}`
-          },
-          medium: {
-            name: imageNameMedium,
-            path: `${profileImgFolder}/medium/${imageNameMedium}`
-          }
-        }
-      } }
-    );
-
-    // Delete old profile images
-    for (let image of pathToFiles) {
-      if (fs.existsSync(image)) {
-        fs.unlink(image, (err) => {
-          if (err) {
-            console.log(err);
-            next(err);
-          }
-        });
-      }
-    }
-
-    res.status(200).send({ profileImage: `${profileImgFolder}/medium/${imageNameMedium}` }); 
+    // res.status(200).send({ profileImage: `${profileImgFolder}/medium/${imageNameMedium}` }); 
   } catch (err) {
     console.log(err);
     next(err);

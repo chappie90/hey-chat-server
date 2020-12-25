@@ -1,13 +1,13 @@
 import multer from 'multer';
 
-const storage = (destination) => {
-  const MIME_TYPE = {
-    'image/png': 'png',
-    'image/jpeg': 'jpg',
-    'image/jpg': 'jpg',
-    'image/heic': 'heic'
-  };
+const MIME_TYPE = {
+  'image/png': 'png',
+  'image/jpeg': 'jpg',
+  'image/jpg': 'jpg',
+  'image/heic': 'heic'
+};
 
+const diskStorage = (destination) => {
   return multer.diskStorage({
     destination: (req, file, cb) => {
       const isValid = MIME_TYPE[file.mimetype];
@@ -25,4 +25,11 @@ const storage = (destination) => {
   })
 };
 
-export default storage;
+const memoryStorage = () => {
+  return multer.memoryStorage();
+};
+
+export {
+  diskStorage,
+  memoryStorage
+};
