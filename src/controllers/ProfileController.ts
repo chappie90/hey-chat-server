@@ -15,7 +15,7 @@ const getImage = async (req: Request, res: Response, next: NextFunction): Promis
 
     const user = await User.findOne({ _id: userId });
 
-    res.status(200).send({ profileImage: user.profile.image.medium.path });
+    res.status(200).send({ profileImage: user.profile.image.medium.name });
   } catch(err) {
     console.log(err);
     next(err);
@@ -84,7 +84,7 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
     );
 
     res.status(200).send({ 
-      profileImage: `${process.env.S3_DATA_URL}/${profileImgFolder}/medium/${imageNameMedium}` 
+      profileImage: imageNameMedium
     }); 
 
     // Delete old profile images
