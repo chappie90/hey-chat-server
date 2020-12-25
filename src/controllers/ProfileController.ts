@@ -62,9 +62,17 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
     const bufferMedium = await resizeImage(bufferOriginal, mimeType, 'medium', next);
 
     // Delete old profile images
+    const user = await User.findOne({ _id: userId });
+
+  //   const pathToFiles = [
+  //     `${global.appRoot}/${user.profile.image.original.path}`,
+  //     `${global.appRoot}/${user.profile.image.small.path}`,
+  //     `${global.appRoot}/${user.profile.image.medium.path}`
+  //   ];
+
     const params = {
       Bucket: process.env.S3_BUCKET_NAME,
-      Key: `${profileImgFolder}/original/${imageNameOriginal}`
+      Key: `${profileImgFolder}/original/${user.profile.image.original.name}`
     };
 
     console.log(params)
