@@ -63,7 +63,7 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
     // Delete old profile images
     const params = {
       Bucket: process.env.S3_BUCKET_NAME,
-      Key: `${profileImgFolder}/original}/${imageNameOriginal}`
+      Key: `${profileImgFolder}/original/${imageNameOriginal}`
     };
     await global.s3.headObject(params).promise();
     console.log('Image found on s3');
