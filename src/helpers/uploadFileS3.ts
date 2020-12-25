@@ -12,7 +12,8 @@ const uploadFileS3 = async (
     Bucket: process.env.S3_BUCKET_NAME,
     Key: `${destinationFolder}/${filename}`,
     Body: buffer,
-    ContentType: mimeType
+    ContentType: mimeType,
+    ACL: 'public-read'
   };
 
   global.s3.upload(params, (err, data) => {
