@@ -1,5 +1,3 @@
-import { promisify } from 'util';
-import fs from 'fs';
 import convert from 'heic-convert';
  
 // Convert heic / heif images to jpg

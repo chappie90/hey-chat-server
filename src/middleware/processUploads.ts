@@ -30,10 +30,14 @@ const memoryStorage = () => {
 };
 
 const transformImageName = (file: any, imageSize?: string) => {
+  let fileExt = MIME_TYPE[file.mimetype];
+  // Heic files will be converted to jpg
+  if (fileExt === 'heic') fileExt = 'jpg';
+
   if (imageSize) {
-    return `${file.originalname}_${Date.now()}_${imageSize}.${MIME_TYPE[file.mimetype]}`;
+    return `${file.originalname}_${Date.now()}_${imageSize}.${fileExt}`;
   } else {
-    return `${file.originalname}_${Date.now()}.${MIME_TYPE[file.mimetype]}`;
+    return `${file.originalname}_${Date.now()}.${fileExt}`;
   }
 };
 

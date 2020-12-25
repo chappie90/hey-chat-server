@@ -106,8 +106,7 @@ app.get('/', (req: Request, res: Response) => {
 
 // Handle errors
 app.use((err, req: Request, res: Response, next) => {
-  // console.error(err);
-  console.log('index error handeler', err);
+  console.log('Index error handeler', err);
   // res.status(422).send({ message: 'Something went wrong!' });
   next(err);
   // res.status(error.status || 500).send({

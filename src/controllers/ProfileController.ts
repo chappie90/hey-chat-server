@@ -24,7 +24,6 @@ const getImage = async (req: Request, res: Response, next: NextFunction): Promis
 
 const uploadImage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try { 
-    console.log(req.file)
     const imageFile = req.file;
     let bufferOriginal = req.file.buffer;
     const mimeType = req.file.mimetype;
@@ -35,12 +34,11 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
 
     const profileImgFolder = 'public/uploads/profile';
 
-    // // Convert heic / heif images to jpg because jimp doesn't support format
-    // if (fileExt === 'heic' || fileExt === 'heif') {
-    //   const originalImgPath = `${global.appRoot}/${profileImgFolder}/original/${imageNameOriginal}`;
-
-    //   bufferOriginal = await convertImage(bufferOriginal);
-    // }
+    // Convert heic / heif images to jpg because jimp doesn't support format
+    // Returns converted image buffer
+    if (mimeType === 'image/heic') {
+      bufferOriginal = await convertImage(bufferOriginal);
+    }
 
     // Create different size versions of original image 
     // Returns buffer output
