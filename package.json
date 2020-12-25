@@ -4,7 +4,7 @@
   "description": "",
   "main": "build/index.js",
   "scripts": {
-    "start": "node build/index.js",
+    "start": "node --max_old_space_size=2048 build/index.js",
     "start:dev": "nodemon",
     "build": "tsc",
     "postinstall": "npm run build",
