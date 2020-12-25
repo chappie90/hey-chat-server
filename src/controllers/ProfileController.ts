@@ -9,6 +9,8 @@ import uploadFileS3 from '../helpers/uploadFileS3';
 import deleteFileS3 from '../helpers/deleteFileS3';
 import { transformImageName } from '../middleware/processUploads';
 
+const PROFILE_IMG_FOLDER = 'public/uploads/profile';
+
 const getImage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { userId } = req.query;
@@ -36,8 +38,6 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
         oldImageNameSmall: string,
         oldImageNameMedium: string;
 
-    const profileImgFolder = 'public/uploads/profile';
-
     // Convert heic / heif images to jpg because jimp doesn't support format
     // Returns converted image buffer
     if (mimeType === 'image/heic') {
@@ -59,9 +59,9 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
 
     // Upload TO AWS S3 bucket
     // Returns bucket image path
-    await uploadFileS3(bufferOriginal, imageNameOriginal, mimeType, `${profileImgFolder}/original`, next);
-    await uploadFileS3(bufferSmall, imageNameSmall, mimeType,`${profileImgFolder}/small`, next);
-    await uploadFileS3(bufferMedium, imageNameMedium, mimeType, `${profileImgFolder}/medium`, next);
+    await uploadFileS3(bufferOriginal, imageNameOriginal, mimeType, `${PROFILE_IMG_FOLDER}/original`, next);
+    await uploadFileS3(bufferSmall, imageNameSmall, mimeType,`${PROFILE_IMG_FOLDER}/small`, next);
+    await uploadFileS3(bufferMedium, imageNameMedium, mimeType, `${PROFILE_IMG_FOLDER}/medium`, next);
 
     await User.updateOne(
       { _id: userId },
@@ -69,15 +69,15 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
         image: {
           original: {
             name: imageNameOriginal,
-            path: `${process.env.S3_DATA_URL}/${profileImgFolder}/original/${imageNameOriginal}`
+            path: `${process.env.S3_DATA_URL}/${PROFILE_IMG_FOLDER}/original/${imageNameOriginal}`
           },
           small: {
             name: imageNameSmall,
-            path: `${process.env.S3_DATA_URL}/${profileImgFolder}/small/${imageNameSmall}`
+            path: `${process.env.S3_DATA_URL}/${PROFILE_IMG_FOLDER}/small/${imageNameSmall}`
           },
           medium: {
             name: imageNameMedium,
-            path: `${process.env.S3_DATA_URL}/${profileImgFolder}/medium/${imageNameMedium}`
+            path: `${process.env.S3_DATA_URL}/${PROFILE_IMG_FOLDER}/medium/${imageNameMedium}`
           }
         }
       } }
@@ -89,9 +89,9 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
 
     // Delete old profile images
     if (oldImageNameOriginal) {
-      deleteFileS3(oldImageNameOriginal, `${profileImgFolder}/original`);
-      deleteFileS3(oldImageNameSmall, `${profileImgFolder}/small`);
-      deleteFileS3(oldImageNameMedium, `${profileImgFolder}/medium`);
+      deleteFileS3(oldImageNameOriginal, `${PROFILE_IMG_FOLDER}/original`);
+      deleteFileS3(oldImageNameSmall, `${PROFILE_IMG_FOLDER}/small`);
+      deleteFileS3(oldImageNameMedium, `${PROFILE_IMG_FOLDER}/medium`);
     }
   } catch (err) {
     console.log(err);
@@ -104,13 +104,12 @@ const deleteImage = async (req: Request, res: Response, next: NextFunction): Pro
 
   try {
     const user = await User.findOne({ _id: userId });
-
-    const pathToFiles = [
-      `${global.appRoot}/${user.profile.image.original.path}`,
-      `${global.appRoot}/${user.profile.image.small.path}`,
-      `${global.appRoot}/${user.profile.image.medium.path}`
-    ];
-
+    if (user.profile.image.original.name) {
+      deleteFileS3(user.profile.image.original.name, `${PROFILE_IMG_FOLDER}/original`);
+      deleteFileS3(user.profile.image.medium.name, `${PROFILE_IMG_FOLDER}/small`);
+      deleteFileS3(user.profile.image.small.name, `${PROFILE_IMG_FOLDER}/medium`);
+    }
+    
     await User.updateOne(
       { _id: userId },
       { profile: {
@@ -130,18 +129,6 @@ const deleteImage = async (req: Request, res: Response, next: NextFunction): Pro
         }
       } }
     );
-
-    // Delete all profile image files
-    for (let image of pathToFiles) {
-      if (fs.existsSync(image)) {
-        fs.unlink(image, (err) => {
-          if (err) {
-            console.log(err);
-            next(err);
-          }
-        });
-      }
-    }
 
     res.status(200).send({ imageDeleted: true });
   } catch (err) {
