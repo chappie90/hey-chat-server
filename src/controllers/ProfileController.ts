@@ -6,6 +6,7 @@ const User = mongoose.model('User');
 import convertImage from '../helpers/convertImage';
 import resizeImage from '../helpers/resizeImage';
 import uploadFileS3 from '../helpers/uploadFileS3';
+import deleteFileS3 from '../helpers/deleteFileS3';
 import { transformImageName } from '../middleware/processUploads';
 
 const getImage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -65,6 +66,9 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
       Bucket: process.env.S3_BUCKET_NAME,
       Key: `${profileImgFolder}/original/${imageNameOriginal}`
     };
+
+    console.log(params)
+
     await global.s3.headObject(params).promise();
     console.log('Image found on s3');
     
