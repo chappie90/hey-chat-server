@@ -32,6 +32,10 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
     const imageNameMedium = transformImageName(imageFile, 'medium');
     const userId = req.body.userId;
 
+    let oldImageNameOriginal: string,
+        oldImageNameSmall: string,
+        oldImageNameMedium: string;
+
     const profileImgFolder = 'public/uploads/profile';
 
     // Convert heic / heif images to jpg because jimp doesn't support format
@@ -45,12 +49,12 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
     const bufferSmall = await resizeImage(bufferOriginal, mimeType, 'small', next);
     const bufferMedium = await resizeImage(bufferOriginal, mimeType, 'medium', next);
 
-    // Delete old profile images
+    // Get reference to old profile images to delete later
     const user = await User.findOne({ _id: userId });
     if (user.profile.image.original.name) {
-      deleteFileS3(user.profile.image.original.name, `${profileImgFolder}/original`);
-      deleteFileS3(user.profile.image.small.name, `${profileImgFolder}/small`);
-      deleteFileS3(user.profile.image.medium.name, `${profileImgFolder}/medium`);
+      oldImageNameOriginal = user.profile.image.original.name;
+      oldImageNameMedium = user.profile.image.medium.name;
+      oldImageNameSmall = user.profile.image.small.name;
     }
 
     // Upload TO AWS S3 bucket
@@ -82,6 +86,13 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
     res.status(200).send({ 
       profileImage: `${process.env.S3_DATA_URL}/${profileImgFolder}/medium/${imageNameMedium}` 
     }); 
+
+    // Delete old profile images
+    if (oldImageNameOriginal) {
+      deleteFileS3(oldImageNameOriginal, `${profileImgFolder}/original`);
+      deleteFileS3(oldImageNameSmall, `${profileImgFolder}/small`);
+      deleteFileS3(oldImageNameMedium, `${profileImgFolder}/medium`);
+    }
   } catch (err) {
     console.log(err);
     next(err);
