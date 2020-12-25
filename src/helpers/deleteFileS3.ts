@@ -1,10 +1,6 @@
 import { NextFunction } from "express";
 
-const deleteFileS3 = async (
-  filename: string,
-  destinationFolder: string,
-  next: NextFunction
-): Promise<void> => {
+const deleteFileS3 = async (filename: string, destinationFolder: string): Promise<void> => {
   const params = {
     Bucket: process.env.S3_BUCKET_NAME,
     Key: `${destinationFolder}/${filename}`

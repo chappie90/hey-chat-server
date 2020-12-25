@@ -3,15 +3,14 @@ import fs from 'fs';
 import convert from 'heic-convert';
  
 // Convert heic / heif images to jpg
-const convertImage = async (oldPath: string, newPath: string): Promise<void> => {
-  const inputBuffer = await promisify(fs.readFile)(oldPath);
+const convertImage = async (inputBuffer: Buffer): Promise<Buffer> => {
   const outputBuffer = await convert({
     buffer: inputBuffer, 
     format: 'JPEG', 
     quality: 1 
   });
- 
-  await promisify(fs.writeFile)(newPath, outputBuffer);
+  
+  return outputBuffer;
 };
 
 export default convertImage;

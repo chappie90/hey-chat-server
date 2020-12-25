@@ -24,8 +24,9 @@ const getImage = async (req: Request, res: Response, next: NextFunction): Promis
 
 const uploadImage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try { 
+    console.log(req.file)
     const imageFile = req.file;
-    const bufferOriginal = req.file.buffer;
+    let bufferOriginal = req.file.buffer;
     const mimeType = req.file.mimetype;
     const imageNameOriginal = transformImageName(imageFile);
     const imageNameSmall = transformImageName(imageFile, 'small');
@@ -34,27 +35,12 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
 
     const profileImgFolder = 'public/uploads/profile';
 
-  //   // Convert heic / heif images to jpg because jimp doesn't support format
-  //   if (fileExt === 'heic' || fileExt === 'heif') {
-  //     const originalImgPath = `${global.appRoot}/${profileImgFolder}/original/${imageNameOriginal}`;
+    // // Convert heic / heif images to jpg because jimp doesn't support format
+    // if (fileExt === 'heic' || fileExt === 'heif') {
+    //   const originalImgPath = `${global.appRoot}/${profileImgFolder}/original/${imageNameOriginal}`;
 
-  //     await convertImage(
-  //       originalImgPath,
-  //       `${global.appRoot}/${profileImgFolder}/original/${joinNameParts}.jpg`
-  //     );
-
-  //     imageNameOriginal = `${joinNameParts}.jpg`;
-
-  //      // Delete original heic / heif file
-  //     if (fs.existsSync(originalImgPath)) {
-  //       fs.unlink(originalImgPath, (err) => {
-  //         if (err) {
-  //           console.log(err);
-  //           next(err);
-  //         }
-  //       });
-  //     }
-  //   }
+    //   bufferOriginal = await convertImage(bufferOriginal);
+    // }
 
     // Create different size versions of original image 
     // Returns buffer output
@@ -64,31 +50,16 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
     // Delete old profile images
     const user = await User.findOne({ _id: userId });
     if (user.profile.image.original.name) {
-      const params = {
-        Bucket: process.env.S3_BUCKET_NAME,
-        Key: `${profileImgFolder}/original/${user.profile.image.original.name}`
-      };
-  
-      await global.s3.headObject(params).promise();
-      console.log('Image found on s3');
-      
-      await global.s3.deleteObject(params).promise();
-      console.log('Image deleted successfully');
+      deleteFileS3(user.profile.image.original.name, `${profileImgFolder}/original`);
+      deleteFileS3(user.profile.image.small.name, `${profileImgFolder}/small`);
+      deleteFileS3(user.profile.image.medium.name, `${profileImgFolder}/medium`);
     }
-
-  //   const pathToFiles = [
-  //     `${global.appRoot}/${user.profile.image.original.path}`,
-  //     `${global.appRoot}/${user.profile.image.small.path}`,
-  //     `${global.appRoot}/${user.profile.image.medium.path}`
-  //   ];
 
     // Upload TO AWS S3 bucket
     // Returns bucket image path
     await uploadFileS3(bufferOriginal, imageNameOriginal, mimeType, `${profileImgFolder}/original`, next);
     await uploadFileS3(bufferSmall, imageNameSmall, mimeType,`${profileImgFolder}/small`, next);
     await uploadFileS3(bufferMedium, imageNameMedium, mimeType, `${profileImgFolder}/medium`, next);
-
-    console.log('controller waited for s3 upload')
 
     await User.updateOne(
       { _id: userId },

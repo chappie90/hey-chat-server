@@ -35,7 +35,6 @@ const transformImageName = (file: any, imageSize?: string) => {
   } else {
     return `${file.originalname}_${Date.now()}.${MIME_TYPE[file.mimetype]}`;
   }
-
 };
 
 export {
