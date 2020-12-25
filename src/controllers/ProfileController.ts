@@ -61,22 +61,20 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
     const bufferSmall = await resizeImage(bufferOriginal, mimeType, 'small', next);
     const bufferMedium = await resizeImage(bufferOriginal, mimeType, 'medium', next);
 
-    // // Delete old profile images
-    // const user = await User.findOne({ _id: userId });
-    // if (user.profile.image.original.name) {
-    //   const params = {
-    //     Bucket: process.env.S3_BUCKET_NAME,
-    //     Key: `${profileImgFolder}/original/${user.profile.image.original.name}`
-    //   };
+    // Delete old profile images
+    const user = await User.findOne({ _id: userId });
+    if (user.profile.image.original.name) {
+      const params = {
+        Bucket: process.env.S3_BUCKET_NAME,
+        Key: `${profileImgFolder}/original/${user.profile.image.original.name}`
+      };
   
-    //   console.log(params)
-  
-    //   await global.s3.headObject(params).promise();
-    //   console.log('Image found on s3');
+      await global.s3.headObject(params).promise();
+      console.log('Image found on s3');
       
-    //   await global.s3.deleteObject(params).promise();
-    //   console.log('Image deleted successfully');
-    // }
+      await global.s3.deleteObject(params).promise();
+      console.log('Image deleted successfully');
+    }
 
   //   const pathToFiles = [
   //     `${global.appRoot}/${user.profile.image.original.path}`,
