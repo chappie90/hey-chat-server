@@ -26,7 +26,7 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
     const userId = req.body.userId;
 
     console.log('file')
-    console.log(file)
+    console.log(req.file)
 
     // UPLOAD TO AWS
     const uploadFileS3Bucket = async (file: any, filename: string): Promise<void> => {
