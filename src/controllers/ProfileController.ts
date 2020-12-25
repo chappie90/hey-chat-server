@@ -106,8 +106,8 @@ const deleteImage = async (req: Request, res: Response, next: NextFunction): Pro
     const user = await User.findOne({ _id: userId });
     if (user.profile.image.original.name) {
       await deleteFileS3(user.profile.image.original.name, `${PROFILE_IMG_FOLDER}/original`);
-      await deleteFileS3(user.profile.image.medium.name, `${PROFILE_IMG_FOLDER}/small`);
-      await deleteFileS3(user.profile.image.small.name, `${PROFILE_IMG_FOLDER}/medium`);
+      await deleteFileS3(user.profile.image.medium.name, `${PROFILE_IMG_FOLDER}/medium`);
+      await deleteFileS3(user.profile.image.small.name, `${PROFILE_IMG_FOLDER}/small`);
     }
     
     await User.updateOne(
