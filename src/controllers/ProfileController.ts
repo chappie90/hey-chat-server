@@ -30,7 +30,7 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
       const params = {
         Bucket: process.env.S3_BUCKET_NAME,
         Key: filename,
-        Body: Buffer.from(image, 'binary'),
+        Body: Buffer.from(image.filename, 'binary'),
         ContentType: file.mimetype
       };
 
