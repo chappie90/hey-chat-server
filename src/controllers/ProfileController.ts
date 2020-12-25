@@ -25,6 +25,9 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
     const image = req.file;
     const userId = req.body.userId;
 
+    console.log('file')
+    console.log(file)
+
     // UPLOAD TO AWS
     const uploadFileS3Bucket = async (file: any, filename: string): Promise<void> => {
       const params = {
