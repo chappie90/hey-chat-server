@@ -17,6 +17,6 @@ export const onMakeOutgoingVideoCall = async (
     const recipientSocketId = users[recipientId].id;
     // Send offer to recipient
     const offerData = { callerId, callerName, offer };
-    io.to(recipientSocketId).emit('incoming_video_call_received', offerData);
+    io.to(recipientSocketId).emit('incoming_video_call_received', JSON.stringify(offerData));
   }
 };
