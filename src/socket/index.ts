@@ -8,6 +8,7 @@ import {
   onStartTyping,
   onStopTyping
 } from './chatsHandlers';
+import { onSendOfferVideoCall } from './videoCallHandlers';
 import { Socket } from 'socket.io';
 
 const users: { [key: string]: Socket } = {};
@@ -58,6 +59,11 @@ const initSocket = (io: Socket) => {
     // User stops typing
     socket.on('stop_typing', (data: string) => {
       onStopTyping(io, socket, users, data);
+    });
+
+    // User sends offer to start video call
+    socket.on('send_offer_video_call', (data: string) => {
+      onSendOfferVideoCall(io, socket, users, data);
     });
 
     // Disconnect from socket
