@@ -10,14 +10,13 @@ export const onSendOfferVideoCall = async (
   users: { [key: string]: Socket },
   data: string
 ): Promise<void> => {
-  console.log('video call offer received')
+  const { senderId, recipientId, offer } = JSON.parse(data);
 
-  const { userId } = JSON.parse(data);
-
-  const user = await User.findOne({ _id: userId });
-  const newProfileImage = user.profile.image.small.path;
-
-  // Notify all active contacts of new profile image
-  const imageData = { userId, profileImage: newProfileImage };
-  socket.broadcast.to(userId).emit('profile_image_updated', JSON.stringify(imageData));
+  // Check if recipient is online and get socket id
+  if (users[recipientId]) {
+    const recipientSocketId = users[recipientId].id;
+    // Send offer to recipient
+    const offerData = { senderId, offer };
+    io.to(recipientSocketId).emit('video_call_offer_received', offerData);
+  }
 };
