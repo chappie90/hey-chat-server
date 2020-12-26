@@ -8,6 +8,8 @@ import { TChat } from '../types/index';
 import sendPushNotification from '../helpers/sendPushNotification';
 import sendSilentPushNotification from '../helpers/sendSilentPushNotification';
 
+const CHAT_MESSAGE_IMG_FOLDER = 'public/uploads/chat';
+
 // User sends new message
 export const onMessage = async (
   io: Socket,
@@ -110,7 +112,11 @@ export const onMessage = async (
       text: message.text,
       createDate: message.createDate
     },
-    reply: message.reply
+    reply: message.reply,
+    image: {
+      name: message.image,
+      path: `${process.env.S3_DATA_URL}/${CHAT_MESSAGE_IMG_FOLDER}/${chatId}/${message.image}`
+    }
   });
   await newMessage.save();
 

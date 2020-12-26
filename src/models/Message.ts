@@ -39,7 +39,8 @@ const messageSchema = new mongoose.Schema({
     origMsgSender: String
   },
   image: {
-    name: String
+    name: String,
+    path: String
   }
 });
 

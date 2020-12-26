@@ -143,6 +143,7 @@ const uploadMessageImage = async (req: Request, res: Response, next: NextFunctio
     next(err);
   }
 };
+
 export default {
   getChats,
   getMessages,
