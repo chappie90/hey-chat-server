@@ -4,6 +4,11 @@ const mongoose = require('mongoose');
 const User = mongoose.model('User');
 const Chat = mongoose.model('Chat');
 const Message = mongoose.model('Message');
+import uploadFileS3 from '../helpers/uploadFileS3';
+import deleteFileS3 from '../helpers/deleteFileS3';
+import { transformImageName } from '../middleware/processUploads';
+
+const CHAT_MESSAGE_IMG_FOLDER = 'public/uploads/chat';
 
 const getChats = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { userId } = req.query;
@@ -121,10 +126,28 @@ const deleteChat = async (req: Request, res: Response, next: NextFunction): Prom
   }
 };
 
+const uploadMessageImage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try { 
+    const imageFile = req.file;
+    const buffer = req.file.buffer;
+    const mimeType = req.file.mimetype;
+    const imageName = transformImageName(imageFile);
+
+    // Upload TO AWS S3 bucket
+    // Returns bucket image path
+    await uploadFileS3(buffer, imageName, mimeType, `${CHAT_MESSAGE_IMG_FOLDER}/${imageFile.originalname}`, next);
+
+    res.status(200).send({ imageName }); 
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+};
 export default {
   getChats,
   getMessages,
   getMoreMessages,
   muteChat,
-  deleteChat
+  deleteChat,
+  uploadMessageImage
 };

@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
 const mongoose = require('mongoose');
-import fs from 'fs';
 
 const User = mongoose.model('User');
 import convertImage from '../helpers/convertImage';
@@ -83,9 +82,7 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
       } }
     );
 
-    res.status(200).send({ 
-      profileImage: imageNameMedium
-    }); 
+    res.status(200).send({ profileImage: imageNameMedium }); 
 
     // Delete old profile images
     if (oldImageNameOriginal) {

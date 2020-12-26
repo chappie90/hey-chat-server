@@ -12,8 +12,9 @@ router.get('/api/messages/more', ChatsCtrl.getMoreMessages);
 router.patch('/api/chat/mute', ChatsCtrl.muteChat);
 router.patch('/api/chat/delete', ChatsCtrl.deleteChat);
 router.post(
-  '/api/messages/image/upload', 
-  multer({ storage: memoryStorage() }).single('messageImage')
+  '/api/message/image/upload', 
+  multer({ storage: memoryStorage() }).single('messageImage'),
+  ChatsCtrl.uploadMessageImage
 );
 
 export default router;
