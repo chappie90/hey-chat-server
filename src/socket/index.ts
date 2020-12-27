@@ -8,7 +8,11 @@ import {
   onStartTyping,
   onStopTyping
 } from './chatsHandlers';
-import { onMakeOutgoingVideoCall } from './videoCallHandlers';
+import { 
+  onMakeOutgoingVideoCall, 
+  onAcceptVideoCall, 
+  onRejectVideoCall 
+} from './videoCallHandlers';
 import { Socket } from 'socket.io';
 
 const users: { [key: string]: Socket } = {};
@@ -64,6 +68,16 @@ const initSocket = (io: Socket) => {
     // User tries to initiate video call
     socket.on('make_outgoing_video_call', (data: string) => {
       onMakeOutgoingVideoCall(io, socket, users, data);
+    });
+
+    // User accepts incoming video call
+    socket.on('accept_video_call', (data: string) => {
+      onAcceptVideoCall(io, socket, users, data);
+    });
+
+    // User rejects incoming video call
+    socket.on('reject_video_call', (data: string) => {
+      onRejectVideoCall(io, socket, users, data);
     });
 
     // Disconnect from socket
