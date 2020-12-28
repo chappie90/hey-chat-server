@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const User = mongoose.model('User');
 
 // User tries to initiate video call
-export const onMakeOutgoingVideoCall = async (
+export const onMakeVideoCallOffer = async (
   io: Socket,
   socket: Socket, 
   users: { [key: string]: Socket },
@@ -17,11 +17,11 @@ export const onMakeOutgoingVideoCall = async (
     const recipientSocketId = users[recipientId].id;
     // Send offer to recipient
     const offerData = { callerId, callerName, offer };
-    io.to(recipientSocketId).emit('incoming_video_call_received', JSON.stringify(offerData));
+    io.to(recipientSocketId).emit('video_call_offer_received', JSON.stringify(offerData));
   }
 };
 
-// User accepts incoming video call
+// Recipient accepts incoming video call
 export const onAcceptVideoCall = async (
   io: Socket,
   socket: Socket, 
@@ -39,7 +39,7 @@ export const onAcceptVideoCall = async (
   }
 };
 
-// User rejects incoming video call
+// Recipient rejects incoming video call
 export const onRejectVideoCall = async (
   io: Socket,
   socket: Socket, 
@@ -55,3 +55,21 @@ export const onRejectVideoCall = async (
     io.to(callerSocketId).emit('video_call_rejected');
   }
 };
+
+// Caller cancels outgoing video call
+export const onCancelVideoCall = async (
+  io: Socket,
+  socket: Socket, 
+  users: { [key: string]: Socket },
+  data: string
+): Promise<void> => {
+  const { recipientId } = JSON.parse(data);
+
+  // Check if recipient is online and get socket id
+  if (users[recipientId]) {
+    const recipientSocketId = users[recipientId].id;
+    // Send rejection to caller
+    io.to(recipientSocketId).emit('video_call_cancelled');
+  }
+};
+
