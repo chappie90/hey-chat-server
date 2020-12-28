@@ -37,7 +37,7 @@ const signin = async (req: Request, res: Response, next: NextFunction): Promise<
   // Check if user exists
   const user = await User.findOne({ username });
   if (!user) {
-    return res.status(422).send({ message: 'Invalid credentials! Please try again.' });
+    return res.status(422).send({ message: 'Invalid credentials!' });
   }
 
   try {
