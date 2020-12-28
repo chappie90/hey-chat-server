@@ -10,7 +10,7 @@ const signup = async (req: Request, res: Response, next: NextFunction): Promise<
     // Check if username already taken
     const checkAvailability = await User.find({ username: username });
     if (checkAvailability.length > 0) {
-      return res.status(422).send({ message: 'Username already taken' });
+      return res.status(422).send({ message: 'Username already taken!' });
     }
 
     // Create new user
@@ -31,13 +31,13 @@ const signin = async (req: Request, res: Response, next: NextFunction): Promise<
   const { username, password } = req.body;
 
   if (!username || !password) {
-    return res.status(422).send({ message: 'Please enter email and password' });
+    return res.status(422).send({ message: 'Username and password can\'t be empty!' });
   }
 
   // Check if user exists
   const user = await User.findOne({ username });
   if (!user) {
-    return res.status(422).send({ message: 'Invalid username or password' });
+    return res.status(422).send({ message: 'Invalid credentials! Please try again.' });
   }
 
   try {
