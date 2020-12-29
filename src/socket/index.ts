@@ -10,6 +10,7 @@ import {
 } from './chatsHandlers';
 import { 
   onMakeVideoCallOffer, 
+  onSendICECandidate,
   onAcceptVideoCall, 
   onRejectVideoCall,
   onCancelVideoCall
@@ -69,6 +70,11 @@ const initSocket = (io: Socket) => {
     // User tries to initiate video call
     socket.on('make_video_call_offer', (data: string) => {
       onMakeVideoCallOffer(io, socket, users, data);
+    });
+
+    // User sends ice candidate
+    socket.on('send_ice_candidate', (data: string) => {
+      onSendICECandidate(io, socket, users, data);
     });
 
     // Recipient accepts incoming video call

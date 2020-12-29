@@ -21,6 +21,24 @@ export const onMakeVideoCallOffer = async (
   }
 };
 
+// // User sends ice candidate
+export const onSendICECandidate = async (
+  io: Socket,
+  socket: Socket, 
+  users: { [key: string]: Socket },
+  data: string
+): Promise<void> => {
+  const { userId, contactId, candidate } = JSON.parse(data);
+
+  // Check if contact is online and get socket id
+  if (users[contactId]) {
+    const contactSocketId = users[contactId].id;
+    // Send rejection to caller
+    io.to(contactSocketId).emit('ice_candidate_received');
+  }
+};
+
+
 // Recipient accepts incoming video call
 export const onAcceptVideoCall = async (
   io: Socket,
@@ -72,4 +90,3 @@ export const onCancelVideoCall = async (
     io.to(recipientSocketId).emit('video_call_cancelled');
   }
 };
-
