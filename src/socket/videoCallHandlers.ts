@@ -21,7 +21,7 @@ export const onMakeVideoCallOffer = async (
   }
 };
 
-// // User sends ice candidate
+// User sends ice candidate
 export const onSendICECandidate = async (
   io: Socket,
   socket: Socket, 
@@ -34,7 +34,8 @@ export const onSendICECandidate = async (
   if (users[contactId]) {
     const contactSocketId = users[contactId].id;
     // Send rejection to caller
-    io.to(contactSocketId).emit('ice_candidate_received');
+    const candidateData = { userId, contactId, candidate };
+    io.to(contactSocketId).emit('ice_candidate_received', JSON.stringify(candidateData));
   }
 };
 
