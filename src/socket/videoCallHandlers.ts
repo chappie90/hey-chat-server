@@ -47,13 +47,13 @@ export const onAcceptVideoCall = async (
   users: { [key: string]: Socket },
   data: string
 ): Promise<void> => {
-  const { callerId, recipientId, answer } = JSON.parse(data);
+  const { callerId, recipientId, recipientName, recipientProfile, answer } = JSON.parse(data);
 
   // Check if caller is online and get socket id
   if (users[callerId]) {
     const callerSocketId = users[callerId].id;
     // Send answer to caller
-    const answerData = { recipientId, answer };
+    const answerData = { recipientId, recipientName, recipientProfile, answer };
     io.to(callerSocketId).emit('video_call_accepted', JSON.stringify(answerData));
   }
 };
