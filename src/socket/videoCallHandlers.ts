@@ -99,13 +99,14 @@ export const onEndVideoCall = async (
   users: { [key: string]: Socket },
   data: string
 ): Promise<void> => {
-  const { recipientId } = JSON.parse(data);
+  const { chatType, chatId, senderId, senderName, senderProfile, recipientId  } = JSON.parse(data);
 
   // Check if recipient is online and get socket id
   if (users[recipientId]) {
     const recipientSocketId = users[recipientId].id;
     // Notify user call has been ended
-    io.to(recipientSocketId).emit('video_call_ended');
+    const eventData = { chatType, chatId, senderId, senderName, senderProfile };
+    io.to(recipientSocketId).emit('video_call_ended', JSON.stringify(eventData));
   }
 };
 
