@@ -92,6 +92,11 @@ const initSocket = (io: Socket) => {
       onCancelVideoCall(io, socket, users, data);
     });
 
+    // Either user ends video call
+    socket.on('end_video_call', (data: string) => {
+      onEndVideoCall(io, socket, users, data);
+    });
+
     // Disconnect from socket
     socket.on('disconnect', async () => {
       await onDisconnect(io, socket, users, userId);

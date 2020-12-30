@@ -87,7 +87,26 @@ export const onCancelVideoCall = async (
   // Check if recipient is online and get socket id
   if (users[recipientId]) {
     const recipientSocketId = users[recipientId].id;
-    // Send rejection to caller
+    // Send cancellation to caller
     io.to(recipientSocketId).emit('video_call_cancelled');
   }
 };
+
+// Either user ends video call
+export const onEndVideoCall = async (
+  io: Socket,
+  socket: Socket, 
+  users: { [key: string]: Socket },
+  data: string
+): Promise<void> => {
+  const { recipientId } = JSON.parse(data);
+
+  // Check if recipient is online and get socket id
+  if (users[recipientId]) {
+    const recipientSocketId = users[recipientId].id;
+    // Notify user call has been ended
+    io.to(recipientSocketId).emit('video_call_ended');
+  }
+};
+
+
