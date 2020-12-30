@@ -13,7 +13,8 @@ import {
   onSendICECandidate,
   onAcceptVideoCall, 
   onRejectVideoCall,
-  onCancelVideoCall
+  onCancelVideoCall,
+  onEndVideoCall
 } from './videoCallHandlers';
 import { Socket } from 'socket.io';
 
