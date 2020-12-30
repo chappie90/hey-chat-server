@@ -10,13 +10,13 @@ export const onMakeVideoCallOffer = async (
   users: { [key: string]: Socket },
   data: string
 ): Promise<void> => {
-  const { callerId, callerName, recipientId, offer } = JSON.parse(data);
+  const { callerId, callerName, callerProfile, recipientId, offer } = JSON.parse(data);
 
   // Check if recipient is online and get socket id
   if (users[recipientId]) {
     const recipientSocketId = users[recipientId].id;
     // Send offer to recipient
-    const offerData = { callerId, callerName, offer };
+    const offerData = { callerId, callerName, callerProfile, offer };
     io.to(recipientSocketId).emit('video_call_offer_received', JSON.stringify(offerData));
   }
 };
@@ -47,13 +47,13 @@ export const onAcceptVideoCall = async (
   users: { [key: string]: Socket },
   data: string
 ): Promise<void> => {
-  const { callerId, recipientId, recipientName, recipientProfile, answer } = JSON.parse(data);
+  const { callerId, recipientId, answer } = JSON.parse(data);
 
   // Check if caller is online and get socket id
   if (users[callerId]) {
     const callerSocketId = users[callerId].id;
     // Send answer to caller
-    const answerData = { recipientId, recipientName, recipientProfile, answer };
+    const answerData = { recipientId, answer };
     io.to(callerSocketId).emit('video_call_accepted', JSON.stringify(answerData));
   }
 };
