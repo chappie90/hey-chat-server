@@ -13,7 +13,7 @@ export const onMakeVideoCallOffer = async (
   const { 
     callId, 
     chatId, 
-    caller: { id: userId, username, profileImage }, 
+    caller,
     recipientId, 
     offer,
     type
@@ -23,7 +23,7 @@ export const onMakeVideoCallOffer = async (
   if (users[recipientId]) {
     const recipientSocketId = users[recipientId].id;
     // Send offer to recipient
-    const offerData = { callId, chatId, caller: { id: userId, username, profileImage }, offer, type };
+    const offerData = { callId, chatId, caller, offer, type };
     io.to(recipientSocketId).emit('video_call_offer_received', JSON.stringify(offerData));
   }
 };
