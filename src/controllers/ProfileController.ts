@@ -50,7 +50,7 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
 
     // Get reference to old profile images to delete later
     const user = await User.findOne({ _id: userId });
-    if (user.profile.image.original.name) {
+    if (user.avatar.original.name) {
       oldImageNameOriginal = user.avatar.original.name;
       oldImageNameMedium = user.avatar.medium.name;
       oldImageNameSmall = user.avatar.small.name;
