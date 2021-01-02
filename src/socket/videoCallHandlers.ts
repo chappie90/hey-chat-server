@@ -10,20 +10,15 @@ export const onMakeVideoCallOffer = async (
   users: { [key: string]: Socket },
   data: string
 ): Promise<void> => {
-  const { 
-    callId, 
-    chatId, 
-    caller,
-    recipientId, 
-    offer,
-    type
-  } = JSON.parse(data);
+  const { callId, chatId, caller, callee, offer, type } = JSON.parse(data);
+
+  const recipientId = callee._id;
 
   // Check if recipient is online and get socket id
   if (users[recipientId]) {
     const recipientSocketId = users[recipientId].id;
     // Send offer to recipient
-    const offerData = { callId, chatId, caller, offer, type };
+    const offerData = { callId, chatId, caller, callee, offer, type };
     io.to(recipientSocketId).emit('video_call_offer_received', JSON.stringify(offerData));
   }
 };
