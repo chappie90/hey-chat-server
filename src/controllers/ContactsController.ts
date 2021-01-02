@@ -16,7 +16,7 @@ const searchContacts = async (req: Request, res: Response, next: NextFunction): 
         $ne: username 
       } 
     }, 
-    { username: 1, 'avatar.small.name': 1 }).limit(10);
+    { username: 1, 'avatar.small': 1 }).limit(10);
 
     res.status(200).send({ contacts });  
   } catch (err) {

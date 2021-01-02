@@ -11,7 +11,7 @@ export const onUpdateProfileImage = async (
   const { userId } = JSON.parse(data);
 
   const user = await User.findOne({ _id: userId });
-  const newProfileImage = user.avatar.small.name;
+  const newProfileImage = user.avatar.small;
 
   // Notify all active contacts of new profile image
   const imageData = { userId, profileImage: newProfileImage };

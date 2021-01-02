@@ -19,18 +19,9 @@ const userSchema = new Schema({
     required: true
   },
   avatar: {
-    original: {
-      name: String,
-      path: String
-    },
-    small: {
-      name: String,
-      path: String
-    },
-    medium: {
-      name: String,
-      path: String
-    }
+    original: String,
+    small: String,
+    medium: String
   },
   pendingContacts: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   contacts: [{ type: Schema.Types.ObjectId, ref: 'User' }],
