@@ -16,7 +16,7 @@ const getImage = async (req: Request, res: Response, next: NextFunction): Promis
 
     const user = await User.findOne({ _id: userId });
 
-    res.status(200).send({ profileImage: user.profile.image.medium.name });
+    res.status(200).send({ profileImage: user.avatar.medium.name });
   } catch(err) {
     console.log(err);
     next(err);
@@ -51,9 +51,9 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
     // Get reference to old profile images to delete later
     const user = await User.findOne({ _id: userId });
     if (user.profile.image.original.name) {
-      oldImageNameOriginal = user.profile.image.original.name;
-      oldImageNameMedium = user.profile.image.medium.name;
-      oldImageNameSmall = user.profile.image.small.name;
+      oldImageNameOriginal = user.avatar.original.name;
+      oldImageNameMedium = user.avatar.medium.name;
+      oldImageNameSmall = user.avatar.small.name;
     }
 
     // Upload TO AWS S3 bucket
@@ -64,20 +64,18 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
 
     await User.updateOne(
       { _id: userId },
-      { profile: {
-        image: {
-          original: {
-            name: imageNameOriginal,
-            path: `${process.env.S3_DATA_URL}/${PROFILE_IMG_FOLDER}/original/${imageNameOriginal}`
-          },
-          small: {
-            name: imageNameSmall,
-            path: `${process.env.S3_DATA_URL}/${PROFILE_IMG_FOLDER}/small/${imageNameSmall}`
-          },
-          medium: {
-            name: imageNameMedium,
-            path: `${process.env.S3_DATA_URL}/${PROFILE_IMG_FOLDER}/medium/${imageNameMedium}`
-          }
+      { avatar: {
+        original: {
+          name: imageNameOriginal,
+          path: `${process.env.S3_DATA_URL}/${PROFILE_IMG_FOLDER}/original/${imageNameOriginal}`
+        },
+        small: {
+          name: imageNameSmall,
+          path: `${process.env.S3_DATA_URL}/${PROFILE_IMG_FOLDER}/small/${imageNameSmall}`
+        },
+        medium: {
+          name: imageNameMedium,
+          path: `${process.env.S3_DATA_URL}/${PROFILE_IMG_FOLDER}/medium/${imageNameMedium}`
         }
       } }
     );
@@ -102,27 +100,25 @@ const deleteImage = async (req: Request, res: Response, next: NextFunction): Pro
   try {
     const user = await User.findOne({ _id: userId });
     if (user.profile.image.original.name) {
-      await deleteFileS3(user.profile.image.original.name, `${PROFILE_IMG_FOLDER}/original`);
-      await deleteFileS3(user.profile.image.medium.name, `${PROFILE_IMG_FOLDER}/medium`);
-      await deleteFileS3(user.profile.image.small.name, `${PROFILE_IMG_FOLDER}/small`);
+      await deleteFileS3(user.avatar.original.name, `${PROFILE_IMG_FOLDER}/original`);
+      await deleteFileS3(user.avatar.medium.name, `${PROFILE_IMG_FOLDER}/medium`);
+      await deleteFileS3(user.avatar.small.name, `${PROFILE_IMG_FOLDER}/small`);
     }
     
     await User.updateOne(
       { _id: userId },
-      { profile: {
-        image: {
-          original: {
-            name: '',
-            path: ''
-          },
-          small: {
-            name: '',
-            path: ''
-          },
-          medium: {
-            name: '',
-            path: ''
-          }
+      { avatar: {
+        original: {
+          name: '',
+          path: ''
+        },
+        small: {
+          name: '',
+          path: ''
+        },
+        medium: {
+          name: '',
+          path: ''
         }
       } }
     );
