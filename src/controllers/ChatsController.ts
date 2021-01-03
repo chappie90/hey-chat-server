@@ -26,7 +26,7 @@ const getChats = async (req: Request, res: Response, next: NextFunction): Promis
        populate: {
          path: 'participants',
          model: 'User',
-         select: '_id username profile'
+         select: '_id username avatar'
        }
      });
 
