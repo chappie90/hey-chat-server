@@ -3,8 +3,8 @@ const mongoose = require('mongoose');
 
 const User = mongoose.model('User');
 
-// User tries to initiate video call
-export const onMakeVideoCallOffer = async (
+// User tries to initiate call
+export const onMakeCallOffer = async (
   io: Socket,
   socket: Socket, 
   users: { [key: string]: Socket },
@@ -19,7 +19,7 @@ export const onMakeVideoCallOffer = async (
     const recipientSocketId = users[recipientId].id;
     // Send offer to recipient
     const offerData = { callId, chatId, caller, callee, offer, type };
-    io.to(recipientSocketId).emit('video_call_offer_received', JSON.stringify(offerData));
+    io.to(recipientSocketId).emit('call_offer_received', JSON.stringify(offerData));
   }
 };
 
@@ -42,8 +42,8 @@ export const onSendICECandidate = async (
 };
 
 
-// Recipient accepts incoming video call
-export const onAcceptVideoCall = async (
+// Recipient accepts incoming call
+export const onAcceptCall = async (
   io: Socket,
   socket: Socket, 
   users: { [key: string]: Socket },
@@ -56,12 +56,12 @@ export const onAcceptVideoCall = async (
     const callerSocketId = users[callerId].id;
     // Send answer to caller
     const answerData = { recipientId, answer };
-    io.to(callerSocketId).emit('video_call_accepted', JSON.stringify(answerData));
+    io.to(callerSocketId).emit('call_accepted', JSON.stringify(answerData));
   }
 };
 
-// Recipient rejects incoming video call
-export const onRejectVideoCall = async (
+// Recipient rejects incoming call
+export const onRejectCall = async (
   io: Socket,
   socket: Socket, 
   users: { [key: string]: Socket },
@@ -73,12 +73,12 @@ export const onRejectVideoCall = async (
   if (users[callerId]) {
     const callerSocketId = users[callerId].id;
     // Send rejection to caller
-    io.to(callerSocketId).emit('video_call_rejected');
+    io.to(callerSocketId).emit('call_rejected');
   }
 };
 
-// Caller cancels outgoing video call
-export const onCancelVideoCall = async (
+// Caller cancels outgoing call
+export const onCancelCall = async (
   io: Socket,
   socket: Socket, 
   users: { [key: string]: Socket },
@@ -90,12 +90,12 @@ export const onCancelVideoCall = async (
   if (users[recipientId]) {
     const recipientSocketId = users[recipientId].id;
     // Send cancellation to caller
-    io.to(recipientSocketId).emit('video_call_cancelled');
+    io.to(recipientSocketId).emit('call_cancelled');
   }
 };
 
-// Either user ends video call
-export const onEndVideoCall = async (
+// Either user ends call
+export const onEndCall = async (
   io: Socket,
   socket: Socket, 
   users: { [key: string]: Socket },
@@ -108,7 +108,7 @@ export const onEndVideoCall = async (
     const recipientSocketId = users[recipientId].id;
     // Notify user call has been ended
     const eventData = { chatType, chatId, senderId, senderName, senderProfile };
-    io.to(recipientSocketId).emit('video_call_ended', JSON.stringify(eventData));
+    io.to(recipientSocketId).emit('call_ended', JSON.stringify(eventData));
   }
 };
 

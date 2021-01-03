@@ -9,13 +9,13 @@ import {
   onStopTyping
 } from './chatsHandlers';
 import { 
-  onMakeVideoCallOffer, 
+  onMakeCallOffer, 
   onSendICECandidate,
-  onAcceptVideoCall, 
-  onRejectVideoCall,
-  onCancelVideoCall,
-  onEndVideoCall
-} from './videoCallHandlers';
+  onAcceptCall, 
+  onRejectCall,
+  onCancelCall,
+  onEndCall
+} from './callHandlers';
 import { Socket } from 'socket.io';
 
 const users: { [key: string]: Socket } = {};
@@ -68,9 +68,9 @@ const initSocket = (io: Socket) => {
       onStopTyping(io, socket, users, data);
     });
 
-    // User tries to initiate video call
-    socket.on('make_video_call_offer', (data: string) => {
-      onMakeVideoCallOffer(io, socket, users, data);
+    // User tries to initiate call
+    socket.on('make_call_offer', (data: string) => {
+      onMakeCallOffer(io, socket, users, data);
     });
 
     // User sends ice candidate
@@ -78,24 +78,24 @@ const initSocket = (io: Socket) => {
       onSendICECandidate(io, socket, users, data);
     });
 
-    // Recipient accepts incoming video call
-    socket.on('accept_video_call', (data: string) => {
-      onAcceptVideoCall(io, socket, users, data);
+    // Recipient accepts incoming call
+    socket.on('accept_call', (data: string) => {
+      onAcceptCall(io, socket, users, data);
     });
 
-    // Recipient rejects incoming video call
-    socket.on('reject_video_call', (data: string) => {
-      onRejectVideoCall(io, socket, users, data);
+    // Recipient rejects incoming call
+    socket.on('reject_call', (data: string) => {
+      onRejectCall(io, socket, users, data);
     });
 
-    // Caller cancels outgoing video call
-    socket.on('cancel_video_call', (data: string) => {
-      onCancelVideoCall(io, socket, users, data);
+    // Caller cancels outgoing call
+    socket.on('cancel_call', (data: string) => {
+      onCancelCall(io, socket, users, data);
     });
 
-    // Either user ends video call
-    socket.on('end_video_call', (data: string) => {
-      onEndVideoCall(io, socket, users, data);
+    // Either user ends call
+    socket.on('end_call', (data: string) => {
+      onEndCall(io, socket, users, data);
     });
 
     // Disconnect from socket
