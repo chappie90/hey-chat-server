@@ -28,7 +28,7 @@ const signup = async (req: Request, res: Response, next: NextFunction): Promise<
     // Issue json web token
     const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET);
 
-    res.status(200).send({ userId: newUser._id, username: newUser.username, token });
+    res.status(200).send({ _id: newUser._id, username: newUser.username, authToken: token });
   } catch (err) {
     console.log(err);
     next(err);
@@ -52,7 +52,8 @@ const signin = async (req: Request, res: Response, next: NextFunction): Promise<
     // Check password and issue json web token
     await user.comparePassword(password);
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
-    res.send({ userId: user._id, username: user.username, token, });
+
+    res.send({ _id: user._id, username: user.username, authToken: token });
   } catch (err) {
     console.log(err);
     next(err);
