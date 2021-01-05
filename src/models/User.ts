@@ -29,7 +29,8 @@ const userSchema = new Schema({
   mutedChats: [{ type: String }],
   deletedChats: [{ type: Schema.Types.ObjectId, ref: 'Chat' }],
   deviceToken: { type: String },
-  deviceOS: { type: String }
+  deviceOS: { type: String },
+  voipDeviceToken: { type: String }
 });
 
 userSchema.pre<IUser>('save', function(next) {
