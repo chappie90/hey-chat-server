@@ -13,11 +13,9 @@ const sendVoipPushNotification = async (
   if (deviceOS === 'ios') {
     console.log('inside voip ios')
     notification = new apn.Notification({
-      "aps":{
-        "uuid": data.callId,
-        "callerName": data.caller.username,
-        "handle": data.caller.username
-      },
+      "uuid": data.callId,
+      "callerName": data.caller.username,
+      "handle": data.caller.username,
       "payload":JSON.stringify(data)
     });
     notification.pushType = 'voip';
