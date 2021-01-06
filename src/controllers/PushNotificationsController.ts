@@ -44,10 +44,6 @@ const sendVoipPush = async (req: Request, res: Response, next: NextFunction): Pr
     const deviceToken = calleeDeviceOS === 'ios' ? user.voipDeviceToken : user.deviceToken;
 
     const data = { callId, chatId, caller, callee, callType };
-
-    console.log('send voip notification')
-    console.log(data);
-
     // apns-expiration: use 0 or low value? no reatttempts if 0 and fails
     // apns-priority: highest 0
     // apns-topic: the apns-topic header field must use your app’s bundle ID with .voip appended to the end
