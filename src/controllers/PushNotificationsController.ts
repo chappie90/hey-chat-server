@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from 'express';
 const mongoose = require('mongoose');
 
 const User = mongoose.model('User');
-import sendPushNotification from '../helpers/sendPushNotification';
 import sendSilentPushNotification from '../helpers/sendSilentPushNotification';
 
 const saveDeviceToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
