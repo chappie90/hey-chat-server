@@ -50,7 +50,9 @@ const sendVoipPush = async (req: Request, res: Response, next: NextFunction): Pr
     // If you’re using certificate-based authentication, you must also register the certificate for VoIP services.
     // The topic is then part of the 1.2.840.113635.100.6.3.4 or 1.2.840.113635.100.6.3.6 extension.
 
-    sendVoipPushNotification(calleeDeviceOS, deviceToken, data, 'voip_notification_received');
+    console.log('hitting controlelr')
+
+    await sendVoipPushNotification(calleeDeviceOS, deviceToken, data, 'voip_notification_received');
 
     res.status(200).send({ success: true });
   } catch(err) {

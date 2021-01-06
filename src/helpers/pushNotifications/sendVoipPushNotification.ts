@@ -9,6 +9,7 @@ const sendVoipPushNotification = async (
   let notification;
 
   console.log(deviceOS)
+  console.log('what')
   
   if (deviceOS === 'ios') {
     console.log('inside voip ios')
