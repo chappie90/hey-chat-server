@@ -1,8 +1,8 @@
 import apn from 'apn';
 
-const sendSilentPushNotification = async (
+const sendVoipPushNotification = async (
   deviceOS: string,
-  deviceToken: string,
+  voipDeviceToken: string,
   data: any,
   type: string
 ): Promise<void> => {
@@ -10,10 +10,6 @@ const sendSilentPushNotification = async (
 
   if (deviceOS === 'ios') {
     notification = new apn.Notification({
-      "aps":{
-        "content-available":"1",
-        "sound":""
-      },
       "topic":process.env.APP_ID,
       "payload":{
         "silent":true,
@@ -21,13 +17,17 @@ const sendSilentPushNotification = async (
         "payload":JSON.stringify(data)
       }
     });
-    global.apnProvider.send(notification, deviceToken)
-      .then(response => {
-        // successful device tokens
-        console.log(response.sent);
-        // failed device tokens
-        console.log(response.failed);
-      });
+    notification.pushType = 'voip';
+
+    console.log(notification)
+
+    // global.apnProvider.send(notification, voipDeviceToken)
+    //   .then(response => {
+    //     // successful device tokens
+    //     console.log(response.sent);
+    //     // failed device tokens
+    //     console.log(response.failed);
+    //   });
   }
 
   if (deviceOS === 'android') {
@@ -40,7 +40,7 @@ const sendSilentPushNotification = async (
           "payload":JSON.stringify(data)
         }
       },
-      token:deviceToken
+      token:voipDeviceToken
     };
 
     global.firebaseAdmin.messaging().send(notification)
@@ -54,4 +54,4 @@ const sendSilentPushNotification = async (
   }
 };
 
-export default sendSilentPushNotification;
+export default sendVoipPushNotification;

@@ -5,8 +5,8 @@ const User = mongoose.model('User');
 const Chat = mongoose.model('Chat');
 const Message = mongoose.model('Message');
 import { TChat } from '../types/index';
-import sendPushNotification from '../helpers/sendPushNotification';
-import sendSilentPushNotification from '../helpers/sendSilentPushNotification';
+import sendPushNotification from '../helpers/pushNotifications/sendPushNotification';
+import sendSilentPushNotification from '../helpers/pushNotifications/sendSilentPushNotification';
 
 const CHAT_MESSAGE_IMG_FOLDER = 'public/uploads/chat';
 

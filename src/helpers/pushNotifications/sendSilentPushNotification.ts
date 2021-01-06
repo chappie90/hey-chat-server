@@ -1,42 +1,45 @@
 import apn from 'apn';
 
-const sendPushNotification = async (
+const sendSilentPushNotification = async (
   deviceOS: string,
   deviceToken: string,
-  title: string,
-  body: string
+  data: any,
+  type: string
 ): Promise<void> => {
   let notification;
 
   if (deviceOS === 'ios') {
     notification = new apn.Notification({
-      "aps":{"alert":{
-          "title":title,
-          "body":body,
-          "sound":"default"
-        },
-        "badge":1
+      "aps":{
+        "content-available":"1",
+        "sound":""
       },
-      "topic":process.env.APP_ID
+      "topic":process.env.APP_ID,
+      "payload":{
+        "silent":true,
+        "type":type,
+        "payload":JSON.stringify(data)
+      }
     });
+    // notification.pushType = 'voip';
     global.apnProvider.send(notification, deviceToken)
-      .then( response => {
+      .then(response => {
         // successful device tokens
         console.log(response.sent);
         // failed device tokens
         console.log(response.failed);
       });
   }
+
   if (deviceOS === 'android') {
     notification = {
       "android":{
-        "notification":{
-          "title":title,
-          "body":body, 
-          "sound":"default",
-          // "icon":
-        },
         "priority":"high",
+        "data":{
+          "silent":"true",
+          "type":type,
+          "payload":JSON.stringify(data)
+        }
       },
       token:deviceToken
     };
@@ -52,4 +55,4 @@ const sendPushNotification = async (
   }
 };
 
-export default sendPushNotification;
+export default sendSilentPushNotification;

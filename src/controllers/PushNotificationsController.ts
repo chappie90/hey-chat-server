@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 const mongoose = require('mongoose');
 
 const User = mongoose.model('User');
-import sendSilentPushNotification from '../helpers/sendSilentPushNotification';
+import sendVoipPushNotification from '../helpers/pushNotifications/sendVoipPushNotification';
 
 const saveDeviceToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -33,7 +33,7 @@ const saveVoipDeviceToken = async (req: Request, res: Response, next: NextFuncti
   }
 }; 
 
-const sendVoipPushNotification = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+const sendVoipPush = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { callId, chatId, caller, callee, callType  } = req.body;
 
@@ -48,14 +48,13 @@ const sendVoipPushNotification = async (req: Request, res: Response, next: NextF
     console.log('send voip notification')
     console.log(data);
 
-    //apns-push-type: voip
     // apns-expiration: use 0 or low value? no reatttempts if 0 and fails
     // apns-priority: highest 0
     // apns-topic: the apns-topic header field must use your app’s bundle ID with .voip appended to the end
     // If you’re using certificate-based authentication, you must also register the certificate for VoIP services.
     // The topic is then part of the 1.2.840.113635.100.6.3.4 or 1.2.840.113635.100.6.3.6 extension.
 
-    sendSilentPushNotification(calleeDeviceOS, deviceToken, data, 'voip_notification_received');
+    sendVoipPushNotification(calleeDeviceOS, deviceToken, data, 'voip_notification_received');
 
     res.status(200).send({ success: true });
   } catch(err) {
@@ -67,6 +66,6 @@ const sendVoipPushNotification = async (req: Request, res: Response, next: NextF
 export default {
   saveDeviceToken,
   saveVoipDeviceToken,
-  sendVoipPushNotification
+  sendVoipPush
 };
 
