@@ -18,10 +18,10 @@ const sendVoipPushNotification = async (
         "callerName": data.caller.username,
         "handle": data.caller.username
       },
-      "topic":process.env.APP_ID,
       "payload":JSON.stringify(data)
     });
     notification.pushType = 'voip';
+    notification.topic = `${process.env.APP_ID}.voip`;
 
     console.log(notification)
 
