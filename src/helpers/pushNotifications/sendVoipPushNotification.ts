@@ -8,16 +8,15 @@ const sendVoipPushNotification = async (
 ): Promise<void> => {
   let notification;
 
-  console.log(deviceOS)
-  console.log('what')
+  console.log(voipDeviceToken)
   
   if (deviceOS === 'ios') {
     console.log('inside voip ios')
     notification = new apn.Notification({
       "aps":{
         "uuid": data.callId,
-        "callerName": data.calller.username,
-        "handle": data.calller.username
+        "callerName": data.caller.username,
+        "handle": data.caller.username
       },
       "topic":process.env.APP_ID,
       "payload":JSON.stringify(data)
