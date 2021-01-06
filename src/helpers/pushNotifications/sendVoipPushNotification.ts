@@ -10,24 +10,25 @@ const sendVoipPushNotification = async (
 
   if (deviceOS === 'ios') {
     notification = new apn.Notification({
+      "aps":{
+        "uuid": data.callId,
+        "callerName": data.calller.username,
+        "handle": data.calller.username
+      },
       "topic":process.env.APP_ID,
-      "payload":{
-        "silent":true,
-        "type":type,
-        "payload":JSON.stringify(data)
-      }
+      "payload":JSON.stringify(data)
     });
     notification.pushType = 'voip';
 
     console.log(notification)
 
-    // global.apnProvider.send(notification, voipDeviceToken)
-    //   .then(response => {
-    //     // successful device tokens
-    //     console.log(response.sent);
-    //     // failed device tokens
-    //     console.log(response.failed);
-    //   });
+    global.apnProvider.send(notification, voipDeviceToken)
+      .then(response => {
+        // successful device tokens
+        console.log(response.sent);
+        // failed device tokens
+        console.log(response.failed);
+      });
   }
 
   if (deviceOS === 'android') {
@@ -35,7 +36,6 @@ const sendVoipPushNotification = async (
       "android":{
         "priority":"high",
         "data":{
-          "silent":"true",
           "type":type,
           "payload":JSON.stringify(data)
         }
