@@ -9,7 +9,8 @@ import {
   onStopTyping
 } from './chatsHandlers';
 import { 
-  // onMakeCallOffer, 
+  onReceiveVoipPush,
+  onMakeCallOffer, 
   onSendICECandidate,
   onAcceptCall, 
   onRejectCall,
@@ -68,10 +69,15 @@ const initSocket = (io: Socket) => {
       onStopTyping(io, socket, users, data);
     });
 
-    // // User tries to initiate call
-    // socket.on('make_call_offer', (data: string) => {
-    //   onMakeCallOffer(io, socket, users, data);
-    // });
+    // User received voip push to wake up device
+    socket.on('receive_voip_push', (data: string) => {
+      onReceiveVoipPush(io, socket, users, data);
+    });
+
+    // User tries to initiate call
+    socket.on('make_call_offer', (data: string) => {
+      onMakeCallOffer(io, socket, users, data);
+    });
 
     // User sends ice candidate
     socket.on('send_ice_candidate', (data: string) => {

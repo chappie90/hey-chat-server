@@ -36,16 +36,13 @@ const saveVoipDeviceToken = async (req: Request, res: Response, next: NextFuncti
 
 const sendVoipPush = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { callId, chatId, caller, callee, offer, callType  } = req.body;
+    const { callId, chatId, caller, callee, callType  } = req.body;
 
     const user = await User.findOne({ _id: callee._id }).lean();
     const { deviceOS: calleeDeviceOS } = user;
     const deviceToken = calleeDeviceOS === 'ios' ? user.voipDeviceToken : user.deviceToken;
 
-    const data = { callId, chatId, caller, callee, offer, callType };
-  
-    console.log(calleeDeviceOS)
-    console.log(deviceToken)
+    const data = { callId, chatId, caller, callee, callType };
 
     if (calleeDeviceOS === 'ios') {
       await sendVoipPushNotification(deviceToken, data);

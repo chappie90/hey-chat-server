@@ -3,25 +3,42 @@ const mongoose = require('mongoose');
 
 const User = mongoose.model('User');
 
-// // User tries to initiate call
-// export const onMakeCallOffer = async (
-//   io: Socket,
-//   socket: Socket, 
-//   users: { [key: string]: Socket },
-//   data: string
-// ): Promise<void> => {
-//   const { callId, chatId, caller, callee, offer, type } = JSON.parse(data);
+// User received voip push to wake up device
+export const onReceiveVoipPush = async (
+  io: Socket,
+  socket: Socket, 
+  users: { [key: string]: Socket },
+  data: string
+): Promise<void> => {
+  const { callerId } = JSON.parse(data);
 
-//   const recipientId = callee._id;
+  // Check if caller is online and get socket id
+  if (users[callerId]) {
+    const callerSocketId = users[callerId].id;
+    // Notify caller voip push has been received
+    io.to(callerSocketId).emit('voip_push_received');
+  }
+};
 
-//   // Check if recipient is online and get socket id
-//   if (users[recipientId]) {
-//     const recipientSocketId = users[recipientId].id;
-//     // Send offer to recipient
-//     const offerData = { callId, chatId, caller, callee, offer, type };
-//     io.to(recipientSocketId).emit('call_offer_received', JSON.stringify(offerData));
-//   }
-// };
+// User tries to initiate call
+export const onMakeCallOffer = async (
+  io: Socket,
+  socket: Socket, 
+  users: { [key: string]: Socket },
+  data: string
+): Promise<void> => {
+  const { callId, chatId, caller, callee, offer, type } = JSON.parse(data);
+
+  const recipientId = callee._id;
+
+  // Check if recipient is online and get socket id
+  if (users[recipientId]) {
+    const recipientSocketId = users[recipientId].id;
+    // Send offer to recipient
+    const offerData = { callId, chatId, caller, callee, offer, type };
+    io.to(recipientSocketId).emit('call_offer_received', JSON.stringify(offerData));
+  }
+};
 
 // User sends ice candidate
 export const onSendICECandidate = async (
