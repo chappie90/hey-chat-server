@@ -38,6 +38,9 @@ const sendVoipPush = async (req: Request, res: Response, next: NextFunction): Pr
   try {
     const { callId, chatId, caller, callee, offer, callType  } = req.body;
 
+    console.log('receving voip push')
+    console.log(req.body)
+
     const user = await User.findOne({ _id: callee._id }).lean();
     const { deviceOS: calleeDeviceOS } = user;
     const deviceToken = calleeDeviceOS === 'ios' ? user.voipDeviceToken : user.deviceToken;
