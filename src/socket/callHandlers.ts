@@ -12,6 +12,9 @@ export const onReceiveVoipPush = async (
 ): Promise<void> => {
   const { callerId } = JSON.parse(data);
 
+  console.log('on receive voip push')
+  console.log(callerId)
+
   // Check if caller is online and get socket id
   if (users[callerId]) {
     const callerSocketId = users[callerId].id;
