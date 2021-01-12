@@ -9,7 +9,7 @@ import {
   onStopTyping
 } from './chatsHandlers';
 import { 
-  onMakeCallOffer, 
+  // onMakeCallOffer, 
   onSendICECandidate,
   onAcceptCall, 
   onRejectCall,
