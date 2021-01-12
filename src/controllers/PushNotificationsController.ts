@@ -39,12 +39,13 @@ const sendVoipPush = async (req: Request, res: Response, next: NextFunction): Pr
     const { callId, chatId, caller, callee, offer, callType  } = req.body;
 
     const user = await User.findOne({ _id: callee._id }).lean();
-
     const { deviceOS: calleeDeviceOS } = user;
-
     const deviceToken = calleeDeviceOS === 'ios' ? user.voipDeviceToken : user.deviceToken;
 
     const data = { callId, chatId, caller, callee, offer, callType };
+
+    console.log('voip controller')
+    console.log(data)
 
     if (calleeDeviceOS === 'ios') {
       await sendVoipPushNotification(calleeDeviceOS, deviceToken, data);
