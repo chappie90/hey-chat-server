@@ -34,7 +34,7 @@ export const onMakeCallOffer = async (
   if (users[calleeId]) {
     const calleeSocketId = users[calleeId].id;
     // Send offer to recipient
-    const offerData = { offer };
+    const offerData = { callId, chatId, caller, callee, offer, type };
     io.to(calleeSocketId).emit('call_offer_received', JSON.stringify(offerData));
   }
 };
@@ -46,32 +46,32 @@ export const onSendICECandidate = async (
   users: { [key: string]: Socket },
   data: string
 ): Promise<void> => {
-  const { userId, contactId, candidate } = JSON.parse(data);
+  const { contactId, candidate } = JSON.parse(data);
 
   // Check if contact is online and get socket id
   if (users[contactId]) {
     const contactSocketId = users[contactId].id;
     // Send rejection to caller
-    const candidateData = { userId, contactId, candidate };
+    const candidateData = { candidate };
     io.to(contactSocketId).emit('ice_candidate_received', JSON.stringify(candidateData));
   }
 };
 
 
-// Recipient accepts incoming call
+// Callee accepts incoming call
 export const onAcceptCall = async (
   io: Socket,
   socket: Socket, 
   users: { [key: string]: Socket },
   data: string
 ): Promise<void> => {
-  const { callerId, recipientId, answer } = JSON.parse(data);
+  const { callerId, answer } = JSON.parse(data);
 
   // Check if caller is online and get socket id
   if (users[callerId]) {
     const callerSocketId = users[callerId].id;
     // Send answer to caller
-    const answerData = { recipientId, answer };
+    const answerData = { answer };
     io.to(callerSocketId).emit('call_accepted', JSON.stringify(answerData));
   }
 };

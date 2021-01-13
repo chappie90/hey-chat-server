@@ -84,7 +84,7 @@ const initSocket = (io: Socket) => {
       onSendICECandidate(io, socket, users, data);
     });
 
-    // Recipient accepts incoming call
+    // Callee accepts incoming call
     socket.on('accept_call', (data: string) => {
       onAcceptCall(io, socket, users, data);
     });
