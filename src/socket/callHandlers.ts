@@ -28,16 +28,14 @@ export const onMakeCallOffer = async (
   users: { [key: string]: Socket },
   data: string
 ): Promise<void> => {
-  const { callId, chatId, caller, callee, offer, type } = JSON.parse(data);
-
-  const recipientId = callee._id;
+  const { calleeId, offer } = JSON.parse(data);
 
   // Check if recipient is online and get socket id
-  if (users[recipientId]) {
-    const recipientSocketId = users[recipientId].id;
+  if (users[calleeId]) {
+    const calleeSocketId = users[calleeId].id;
     // Send offer to recipient
-    const offerData = { callId, chatId, caller, callee, offer, type };
-    io.to(recipientSocketId).emit('call_offer_received', JSON.stringify(offerData));
+    const offerData = { offer };
+    io.to(calleeSocketId).emit('call_offer_received', JSON.stringify(offerData));
   }
 };
 
