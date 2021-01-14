@@ -30,9 +30,6 @@ export const onMakeCallOffer = async (
 ): Promise<void> => {
   const { callerId, offer } = JSON.parse(data);
 
-  console.log('making call offer')
-  console.log(callerId)
-
   // Check if recipient is online and get socket id
   if (users[callerId]) {
     const callerSocketId = users[callerId].id;
@@ -68,14 +65,14 @@ export const onAcceptCall = async (
   users: { [key: string]: Socket },
   data: string
 ): Promise<void> => {
-  const { callerId, answer } = JSON.parse(data);
+  const { calleeId, answer } = JSON.parse(data);
 
   // Check if caller is online and get socket id
-  if (users[callerId]) {
-    const callerSocketId = users[callerId].id;
+  if (users[calleeId]) {
+    const calleeSocketId = users[calleeId].id;
     // Send answer to caller
     const answerData = { answer };
-    io.to(callerSocketId).emit('call_accepted', JSON.stringify(answerData));
+    io.to(calleeSocketId).emit('call_accepted', JSON.stringify(answerData));
   }
 };
 
