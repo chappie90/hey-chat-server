@@ -91,6 +91,7 @@ const initSocket = (io: Socket) => {
 
     // Recipient rejects incoming call
     socket.on('reject_call', (data: string) => {
+      console.log('rejecting call')
       onRejectCall(io, socket, users, data);
     });
 
