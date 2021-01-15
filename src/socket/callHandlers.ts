@@ -35,7 +35,7 @@ export const onSendSdpOffer = async (
     const callerSocketId = users[callerId].id;
     // Send offer to recipient
     const offerData = { offer };
-    io.to(callerSocketId).emit('call_offer_received', JSON.stringify(offerData));
+    io.to(callerSocketId).emit('sdp_offer_received', JSON.stringify(offerData));
   }
 };
 
@@ -57,8 +57,8 @@ export const onSendICECandidate = async (
   }
 };
 
-// Callee accepts incoming call
-export const onAcceptCall = async (
+// Caller sends sdp answer
+export const onSendSdpAnswer = async (
   io: Socket,
   socket: Socket, 
   users: { [key: string]: Socket },
@@ -71,7 +71,7 @@ export const onAcceptCall = async (
     const calleeSocketId = users[calleeId].id;
     // Send answer to caller
     const answerData = { answer };
-    io.to(calleeSocketId).emit('call_accepted', JSON.stringify(answerData));
+    io.to(calleeSocketId).emit('sdp_answer_received', JSON.stringify(answerData));
   }
 };
 
