@@ -10,7 +10,7 @@ import {
 } from './chatsHandlers';
 import { 
   onReceiveVoipPush,
-  onMakeCallOffer, 
+  onSendSdpOffer, 
   onSendICECandidate,
   onAcceptCall, 
   onRejectCall,
@@ -74,9 +74,9 @@ const initSocket = (io: Socket) => {
       onReceiveVoipPush(io, socket, users, data);
     });
 
-    // User tries to initiate call
-    socket.on('make_call_offer', (data: string) => {
-      onMakeCallOffer(io, socket, users, data);
+    // Callee sends sdp offer on call answer
+    socket.on('send_sdp_offer', (data: string) => {
+      onSendSdpOffer(io, socket, users, data);
     });
 
     // User sends ice candidate

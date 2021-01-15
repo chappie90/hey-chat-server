@@ -21,8 +21,8 @@ export const onReceiveVoipPush = async (
   }
 };
 
-// User tries to initiate call
-export const onMakeCallOffer = async (
+// Callee sends sdp offer on call answer
+export const onSendSdpOffer = async (
   io: Socket,
   socket: Socket, 
   users: { [key: string]: Socket },
@@ -56,7 +56,6 @@ export const onSendICECandidate = async (
     io.to(contactSocketId).emit('ice_candidate_received', JSON.stringify(candidateData));
   }
 };
-
 
 // Callee accepts incoming call
 export const onAcceptCall = async (
