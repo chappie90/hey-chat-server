@@ -66,10 +66,14 @@ export const onEndCall = async (
 ): Promise<void> => {
   const { contactId  } = JSON.parse(data);
 
+  console.log('on End call')
+  console.log(contactId)
+
   // Check if contact is online and get socket id
   if (users[contactId]) {
     const contactSocketId = users[contactId].id;
     // Notify user call has been ended
+    console.log('emitting call_ended')
     io.to(contactSocketId).emit('call_ended');
   }
 };
