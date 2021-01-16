@@ -9,12 +9,9 @@ import {
   onStopTyping
 } from './chatsHandlers';
 import { 
-  onReceiveVoipPush,
   onSendSdpOffer, 
   onSendICECandidate,
-  onAcceptCall, 
-  onRejectCall,
-  onCancelCall,
+  onSendSdpAnswer, 
   onEndCall
 } from './callHandlers';
 import { Socket } from 'socket.io';
@@ -87,17 +84,6 @@ const initSocket = (io: Socket) => {
     // Caller sends sdp answer
     socket.on('send_sdp_answer', (data: string) => {
       onSendSdpAnswer(io, socket, users, data);
-    });
-
-    // Recipient rejects incoming call
-    socket.on('reject_call', (data: string) => {
-      console.log('rejecting call')
-      onRejectCall(io, socket, users, data);
-    });
-
-    // Caller cancels outgoing call
-    socket.on('cancel_call', (data: string) => {
-      onCancelCall(io, socket, users, data);
     });
 
     // Either user ends call
