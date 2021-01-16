@@ -57,9 +57,26 @@ const sendVoipPush = async (req: Request, res: Response, next: NextFunction): Pr
   }
 };
 
+const endCall = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { calleeId  } = req.body;
+
+    const user = await User.findOne({ _id: calleeId }).lean();
+    const { deviceOS, deviceToken } = user;
+
+    await sendSilentPushNotification(deviceOS, deviceToken, null, 'voip_end_call');
+
+    res.status(200).send({ success: true });
+  } catch(err) {
+    console.log(err);
+    next(err);
+  }
+};
+
 export default {
   saveDeviceToken,
   saveVoipDeviceToken,
-  sendVoipPush
+  sendVoipPush,
+  endCall
 };
 
