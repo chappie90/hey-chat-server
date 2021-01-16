@@ -66,10 +66,10 @@ const initSocket = (io: Socket) => {
       onStopTyping(io, socket, users, data);
     });
 
-    // User received voip push to wake up device
-    socket.on('receive_voip_push', (data: string) => {
-      onReceiveVoipPush(io, socket, users, data);
-    });
+    // // User received voip push to wake up device
+    // socket.on('receive_voip_push', (data: string) => {
+    //   onReceiveVoipPush(io, socket, users, data);
+    // });
 
     // Callee sends sdp offer on call answer
     socket.on('send_sdp_offer', (data: string) => {
