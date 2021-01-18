@@ -19,9 +19,9 @@ const userSchema = new Schema({
     required: true
   },
   avatar: {
-    original: String,
-    small: String,
-    medium: String
+    original: { type: String, default: '' },
+    small: { type: String, default: '' },
+    medium: { type: String, default: '' },
   },
   pendingContacts: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   contacts: [{ type: Schema.Types.ObjectId, ref: 'User' }],
