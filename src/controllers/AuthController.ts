@@ -90,12 +90,12 @@ const uploadAvatarImage = async (req: Request, res: Response, next: NextFunction
     // Convert heic / heif images to jpg because jimp doesn't support format
     // Returns converted image buffer
     if (mimeType === 'image/heic') {
-      bufferOriginal = await convertImage(bufferOriginal);
+      // bufferOriginal = await convertImage(bufferOriginal);
     }
 
     // Create different size versions of original image 
     // Returns buffer output
-    const bufferSmall = await resizeImage(bufferOriginal, mimeType, 'small', next);
+    // const bufferSmall = await resizeImage(bufferOriginal, mimeType, 'small', next);
     // const bufferMedium = await resizeImage(bufferOriginal, mimeType, 'medium', next);
 
     // Get reference to old profile images to delete later
@@ -109,7 +109,7 @@ const uploadAvatarImage = async (req: Request, res: Response, next: NextFunction
     // Upload TO AWS S3 bucket
     // Returns bucket image path
     await uploadFileS3(bufferOriginal, imageNameOriginal, mimeType, `${PROFILE_IMG_FOLDER}/original`, next);
-    await uploadFileS3(bufferSmall, imageNameSmall, mimeType,`${PROFILE_IMG_FOLDER}/small`, next);
+    // await uploadFileS3(bufferSmall, imageNameSmall, mimeType,`${PROFILE_IMG_FOLDER}/small`, next);
     // await uploadFileS3(bufferMedium, imageNameMedium, mimeType, `${PROFILE_IMG_FOLDER}/medium`, next);
 
     await User.updateOne(
@@ -126,7 +126,7 @@ const uploadAvatarImage = async (req: Request, res: Response, next: NextFunction
     // Delete old profile images
     if (oldImageNameOriginal) {
       deleteFileS3(oldImageNameOriginal, `${PROFILE_IMG_FOLDER}/original`);
-      deleteFileS3(oldImageNameSmall, `${PROFILE_IMG_FOLDER}/small`);
+      // deleteFileS3(oldImageNameSmall, `${PROFILE_IMG_FOLDER}/small`);
       // deleteFileS3(oldImageNameMedium, `${PROFILE_IMG_FOLDER}/medium`);
     }
   } catch (err) {
