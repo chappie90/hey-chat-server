@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 const mongoose = require('mongoose');
 import jwt from 'jsonwebtoken';
 const User = mongoose.model('User');
-const gm = require('gm');
+const gm = require('gm').subClass({imageMagick: true});
 
 import convertImage from '../helpers/convertImage';
 import resizeImage from '../helpers/resizeImage';
