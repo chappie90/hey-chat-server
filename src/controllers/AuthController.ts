@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 const mongoose = require('mongoose');
 import jwt from 'jsonwebtoken';
 const User = mongoose.model('User');
+const gm = require('gm');
 
 import convertImage from '../helpers/convertImage';
 import resizeImage from '../helpers/resizeImage';
@@ -91,6 +92,18 @@ const uploadAvatarImage = async (req: Request, res: Response, next: NextFunction
     // Returns converted image buffer
     if (mimeType === 'image/heic') {
       // bufferOriginal = await convertImage(bufferOriginal);
+      // A buffer can be passed instead of a filepath as well
+        
+        gm(bufferOriginal, req.file.filename)
+          .resize(100, 100)
+          .toBuffer('JPG',function (err, buffer) {
+            if (err) {
+              console.log(err);
+              return;
+            }
+            console.log('done!');
+        });
+
     }
 
     // Create different size versions of original image 
