@@ -11,7 +11,7 @@ const sendVoipPushNotification = async (
       "uuid": data.callId,
       "callerName": data.caller.username,
       "handle": data.caller.username,
-      "hasVideo": data.callType === 'video' ? 'YES' : 'NO',
+      "hasVideo": data.callType === 'video' ? "YES" : "NO",
       "data":JSON.stringify(data)
     }
   });

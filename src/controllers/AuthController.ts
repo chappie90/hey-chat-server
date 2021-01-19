@@ -96,13 +96,13 @@ const uploadAvatarImage = async (req: Request, res: Response, next: NextFunction
     // Create different size versions of original image 
     // Returns buffer output
     const bufferSmall = await resizeImage(bufferOriginal, mimeType, 'small', next);
-    const bufferMedium = await resizeImage(bufferOriginal, mimeType, 'medium', next);
+    // const bufferMedium = await resizeImage(bufferOriginal, mimeType, 'medium', next);
 
     // Get reference to old profile images to delete later
     const user = await User.findOne({ _id: userId });
     if (user.avatar.original) {
       oldImageNameOriginal = user.avatar.original;
-      oldImageNameMedium = user.avatar.medium;
+      // oldImageNameMedium = user.avatar.medium;
       oldImageNameSmall = user.avatar.small;
     }
 
@@ -110,7 +110,7 @@ const uploadAvatarImage = async (req: Request, res: Response, next: NextFunction
     // Returns bucket image path
     await uploadFileS3(bufferOriginal, imageNameOriginal, mimeType, `${PROFILE_IMG_FOLDER}/original`, next);
     await uploadFileS3(bufferSmall, imageNameSmall, mimeType,`${PROFILE_IMG_FOLDER}/small`, next);
-    await uploadFileS3(bufferMedium, imageNameMedium, mimeType, `${PROFILE_IMG_FOLDER}/medium`, next);
+    // await uploadFileS3(bufferMedium, imageNameMedium, mimeType, `${PROFILE_IMG_FOLDER}/medium`, next);
 
     await User.updateOne(
       { _id: userId },
@@ -127,7 +127,7 @@ const uploadAvatarImage = async (req: Request, res: Response, next: NextFunction
     if (oldImageNameOriginal) {
       deleteFileS3(oldImageNameOriginal, `${PROFILE_IMG_FOLDER}/original`);
       deleteFileS3(oldImageNameSmall, `${PROFILE_IMG_FOLDER}/small`);
-      deleteFileS3(oldImageNameMedium, `${PROFILE_IMG_FOLDER}/medium`);
+      // deleteFileS3(oldImageNameMedium, `${PROFILE_IMG_FOLDER}/medium`);
     }
   } catch (err) {
     console.log(err);
