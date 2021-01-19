@@ -93,6 +93,7 @@ const uploadAvatarImage = async (req: Request, res: Response, next: NextFunction
     if (mimeType === 'image/heic') {
       // bufferOriginal = await convertImage(bufferOriginal);
       // A buffer can be passed instead of a filepath as well
+      let bufferTest: any;
         
         gm(bufferOriginal, req.file.filename)
           .resize(100, 100)
@@ -101,6 +102,8 @@ const uploadAvatarImage = async (req: Request, res: Response, next: NextFunction
               console.log(err);
               return;
             }
+            bufferTest = buffer;
+            console.log(bufferTest)
             console.log('done!');
         });
 
