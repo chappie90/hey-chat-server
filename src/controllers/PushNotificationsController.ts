@@ -44,6 +44,8 @@ const sendVoipPush = async (req: Request, res: Response, next: NextFunction): Pr
 
     const data = { callId, chatId, caller, callee, callType };
 
+    console.log(data)
+
     if (calleeDeviceOS === 'ios') {
       await sendVoipPushNotification(deviceToken, data);
     } else {
