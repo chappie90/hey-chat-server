@@ -94,10 +94,13 @@ const uploadAvatarImage = async (req: Request, res: Response, next: NextFunction
       // bufferOriginal = await convertImage(bufferOriginal);
       // A buffer can be passed instead of a filepath as well
       let bufferTest: any;
+
+      console.log(req.file.filename)
+      console.log(bufferOriginal)
         
         gm(bufferOriginal, req.file.filename)
           .resize(100, 100)
-          .toBuffer('JPG',function (err, buffer) {
+          .toBuffer('jpeg',function (err, buffer) {
             if (err) {
               console.log(err);
               return;
