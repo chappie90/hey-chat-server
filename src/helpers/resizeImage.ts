@@ -26,7 +26,6 @@ const resizeImage = async (
           return reject(err);
         };
         if (buffer) { 
-          console.log(buffer);
           return resolve(buffer);
         }
       })
@@ -35,7 +34,8 @@ const resizeImage = async (
 
   const data = gm(bufferInput, 'test.jpg').resize(outputDimensions[0], outputDimensions[1]);
 
-  gmToBuffer(data).then(console.log).catch(err => console.log(err));
+  const output = await gmToBuffer(data);
+  console.log(output)
 
   return null;
 };
