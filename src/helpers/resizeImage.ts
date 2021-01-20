@@ -1,5 +1,4 @@
 import { NextFunction } from 'express';
-import Jimp from 'jimp';
 const gm = require('gm').subClass({imageMagick: true});
 
 const resizeImage = async (
@@ -20,10 +19,10 @@ const resizeImage = async (
   return new Promise((resolve, reject) => {
     gm(bufferInput)
       .resize(outputDimensions[0], outputDimensions[1])
-      .toBuffer((err, buffer) => {
+      .toBuffer('jpeg', (err, buffer) => {
         if (err) { 
           console.log(err);
-          return reject(err);
+          next(err);
         };
         if (buffer) { 
           return resolve(buffer);
