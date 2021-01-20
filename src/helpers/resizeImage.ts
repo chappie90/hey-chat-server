@@ -20,7 +20,7 @@ const resizeImage = async (
   return new Promise((resolve, reject) => {
     gm(bufferInput)
       .resize(outputDimensions[0], outputDimensions[1])
-      .toBuffer('jpeg', (err, buffer) => {
+      .toBuffer((err, buffer) => {
         if (err) { 
           console.log(err);
           return reject(err);
