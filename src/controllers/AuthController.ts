@@ -90,7 +90,7 @@ const uploadAvatarImage = async (req: Request, res: Response, next: NextFunction
 
     // Convert heic / heif images to jpg because jimp doesn't support format
     // Returns converted image buffer
-    // if (mimeType === 'image/heic') {
+    if (mimeType === 'image/heic') {
       // bufferOriginal = await convertImage(bufferOriginal);
       // A buffer can be passed instead of a filepath as well
       let bufferTest: any;
@@ -98,7 +98,7 @@ const uploadAvatarImage = async (req: Request, res: Response, next: NextFunction
       console.log(req.file)
       console.log(bufferOriginal)
         
-        gm(bufferOriginal, 'output.jpeg')
+        gm(bufferOriginal)
           .resize(100, 100)
           .toBuffer('jpeg',function (err, buffer) {
             if (err) {
@@ -126,9 +126,9 @@ const uploadAvatarImage = async (req: Request, res: Response, next: NextFunction
         
 
         // const data = gm(bufferOriginal, 'output.jpg').resize(500)
-        // gmToBuffer(data).then(console.log);
-// 
-    // }
+        // gmToBuffer(data).then(console.log)
+
+    }
 
     // Create different size versions of original image 
     // Returns buffer output
