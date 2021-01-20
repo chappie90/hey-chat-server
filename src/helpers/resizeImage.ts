@@ -18,36 +18,28 @@ const resizeImage = async (
     outputDimensions = [400, 400];
   }
 
-  gm(bufferInput, 'output.jpg')
-    .resize(outputDimensions[0], outputDimensions[1])
-    .toBuffer(mimeType, (err, buffer) => {
-      if (err) {
-        console.log(err);
-        next(err);
-        return;
-      }
+  function gmToBuffer (data) {
+    return new Promise((resolve, reject) => {
+      data.stream((err, stdout, stderr) => {
+        if (err) { return reject(err) }
+        const chunks = []
+        stdout.on('data', (chunk) => { chunks.push(chunk) })
+        // these are 'once' because they can and do fire multiple times for multiple errors,
+        // but this is a promise so you'll have to deal with them one at a time
+        stdout.once('end', () => { resolve(Buffer.concat(chunks)) })
+        stderr.once('data', (data) => { reject(String(data)) })
+      })
+    })
+  }
 
-      bufferOutput = buffer;
-      console.log('done!');
+  const data = gm(bufferInput, 'output.jpg').resize(outputDimensions[0], outputDimensions[1]);
+  gmToBuffer(data).then((res) => {
+    console.log('ready');
+    console.log(res);
   });
+ 
 
-  // await Jimp.read(bufferInput)
-  //   .then(file => {
-  //     return file
-  //       .cover(outputDimensions[0], outputDimensions[1])
-  //       .quality(60)
-  //       .getBuffer(mimeType, (err, buffer) => {
-  //         if (err) {
-  //           console.log(err);
-  //           next(err);
-  //           return;
-  //         }
-  //         bufferOutput = buffer
-  //       });
-  //   })
-  //   .catch(err => console.log(err));
-
-  return bufferOutput; 
+  return null;
 };
 
 export default resizeImage;
