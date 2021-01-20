@@ -33,11 +33,12 @@ const resizeImage = async (
   }
 
   const data = gm(bufferInput, 'output.jpg').resize(outputDimensions[0], outputDimensions[1]);
-  gmToBuffer(data).then((res) => {
-    console.log('ready');
-    console.log(res);
-  });
- 
+  gmToBuffer(data)
+    .then((res) => {
+      console.log('ready');
+      console.log(res);
+    })
+    .catch(e => console.log(e));
 
   return null;
 };
