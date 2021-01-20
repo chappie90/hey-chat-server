@@ -98,7 +98,7 @@ const uploadAvatarImage = async (req: Request, res: Response, next: NextFunction
       console.log(req.file.filename)
       console.log(bufferOriginal)
         
-        gm(bufferOriginal, req.file.filename)
+        gm(bufferOriginal)
           .resize(100, 100)
           .toBuffer('jpeg',function (err, buffer) {
             if (err) {
