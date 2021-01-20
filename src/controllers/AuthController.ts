@@ -128,6 +128,21 @@ const uploadAvatarImage = async (req: Request, res: Response, next: NextFunction
         const data = gm(bufferOriginal, 'output.jpg').resize(500)
         gmToBuffer(data).then(console.log)
 
+        // function processImage(data) {
+        //   gm(data, 'test.jpg')
+        //       .resize('300x300')
+        //     .background('white')
+        //     .flatten()
+        //     .setFormat('jpg')
+        //     .toBuffer(function(err, buffer) {
+        //       if (err) {
+        //           throw err;
+        //       } else {
+        //           fs.writeFile('asd.jpg', buffer);
+        //       }
+        //     });
+        //   }
+
     }
 
     // Create different size versions of original image 
