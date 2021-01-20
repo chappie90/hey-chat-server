@@ -18,27 +18,31 @@ const resizeImage = async (
     outputDimensions = [400, 400];
   }
 
-  function gmToBuffer (data) {
-    return new Promise((resolve, reject) => {
-      data.toBuffer((err, stdout, stderr) => {
-        if (err) { return reject(err) }
-        const chunks = []
-        stdout.on('data', (chunk) => { chunks.push(chunk) })
-        // these are 'once' because they can and do fire multiple times for multiple errors,
-        // but this is a promise so you'll have to deal with them one at a time
-        stdout.once('end', () => { resolve(Buffer.concat(chunks)) })
-        stderr.once('data', (data) => { reject(String(data)) })
-      })
-    })
-  }
+  gm(bufferInput, 'test.jpg')
+    .resize(outputDimensions[0], outputDimensions[1])
+    .toBuffer(function(err, buffer) {
+      if (err) {
+        console.log(err);
+        next(err);
+        return;
+      } 
 
-  const data = gm(bufferInput).resize(outputDimensions[0], outputDimensions[1]);
-  gmToBuffer(data)
-    .then((res) => {
-      console.log('ready');
-      console.log(res);
-    })
-    .catch(e => console.log(e));
+      console.log(buffer)
+    });
+
+  // function gmToBuffer (data) {
+  //   return new Promise((resolve, reject) => {
+  //     data.toBuffer((err, stdout, stderr) => {
+  //       if (err) { return reject(err) }
+  //       const chunks = []
+  //       stdout.on('data', (chunk) => { chunks.push(chunk) })
+  //       // these are 'once' because they can and do fire multiple times for multiple errors,
+  //       // but this is a promise so you'll have to deal with them one at a time
+  //       stdout.once('end', () => { resolve(Buffer.concat(chunks)) })
+  //       stderr.once('data', (data) => { reject(String(data)) })
+  //     })
+  //   })
+  // }
 
   return null;
 };
