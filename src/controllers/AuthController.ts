@@ -110,6 +110,7 @@ const uploadAvatarImage = async (req: Request, res: Response, next: NextFunction
         //     console.log('done!');
         // });
 
+        
         function gmToBuffer (data) {
           return new Promise((resolve, reject) => {
             data.stream((err, stdout, stderr) => {
