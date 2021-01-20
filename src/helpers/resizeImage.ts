@@ -7,7 +7,7 @@ const resizeImage = async (
   mimeType: string,
   outputSize: string,
   next: NextFunction
-) => {
+): Promise<Buffer> => {
 
   let outputDimensions: number[],
       bufferOutput: Buffer;
@@ -18,9 +18,10 @@ const resizeImage = async (
     outputDimensions = [400, 400];
   }
 
-  function gmToBuffer (data) {
-    return new Promise((resolve, reject) => {
-      data.toBuffer('jpeg', (err, buffer) => {
+  return new Promise((resolve, reject) => {
+    gm(bufferInput, 'test.jpg')
+      .resize(outputDimensions[0], outputDimensions[1])
+      .toBuffer('jpeg', (err, buffer) => {
         if (err) { 
           console.log(err);
           return reject(err);
@@ -28,15 +29,8 @@ const resizeImage = async (
         if (buffer) { 
           return resolve(buffer);
         }
-      })
-    })
-  }
-
-  const data = gm(bufferInput, 'test.jpg').resize(outputDimensions[0], outputDimensions[1]);
-
-  const output = await gmToBuffer(data);
-
-  return output;
+    });
+  });
 };
 
 export default resizeImage;
