@@ -20,7 +20,7 @@ const resizeImage = async (
 
   function gmToBuffer (data) {
     return new Promise((resolve, reject) => {
-      data.stream((err, stdout, stderr) => {
+      data.toBuffer((err, stdout, stderr) => {
         if (err) { return reject(err) }
         const chunks = []
         stdout.on('data', (chunk) => { chunks.push(chunk) })
@@ -32,7 +32,7 @@ const resizeImage = async (
     })
   }
 
-  const data = gm(bufferInput, 'output.jpg').resize(outputDimensions[0], outputDimensions[1]);
+  const data = gm(bufferInput).resize(outputDimensions[0], outputDimensions[1]);
   gmToBuffer(data)
     .then((res) => {
       console.log('ready');
