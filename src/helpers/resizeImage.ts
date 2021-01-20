@@ -9,8 +9,7 @@ const resizeImage = async (
   next: NextFunction
 ): Promise<Buffer> => {
 
-  let outputDimensions: number[],
-      bufferOutput: Buffer;
+  let outputDimensions: number[];
 
   if (outputSize === 'small') {
     outputDimensions = [120, 120];
@@ -19,7 +18,7 @@ const resizeImage = async (
   }
 
   return new Promise((resolve, reject) => {
-    gm(bufferInput, 'test.jpg')
+    gm(bufferInput)
       .resize(outputDimensions[0], outputDimensions[1])
       .toBuffer('jpeg', (err, buffer) => {
         if (err) { 
