@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from 'express';
 const mongoose = require('mongoose');
 import jwt from 'jsonwebtoken';
 const User = mongoose.model('User');
-const gm = require('gm').subClass({imageMagick: true});
 
 import convertImage from '../helpers/convertImage';
 import resizeImage from '../helpers/resizeImage';
@@ -88,79 +87,41 @@ const uploadAvatarImage = async (req: Request, res: Response, next: NextFunction
         oldImageNameSmall: string,
         oldImageNameMedium: string;
 
-    // Convert heic / heif images to jpg because jimp doesn't support format
-    // Returns converted image buffer
-    if (mimeType === 'image/heic') {
-      // bufferOriginal = await convertImage(bufferOriginal);
-      // A buffer can be passed instead of a filepath as well
-      let bufferTest: any;
+    // function gmToBuffer (data) {
+    //   return new Promise((resolve, reject) => {
+    //     data.stream((err, stdout, stderr) => {
+    //       if (err) { return reject(err) }
+    //       const chunks = []
+    //       stdout.on('data', (chunk) => { chunks.push(chunk) })
+    //       // these are 'once' because they can and do fire multiple times for multiple errors,
+    //       // but this is a promise so you'll have to deal with them one at a time
+    //       stdout.once('end', () => { resolve(Buffer.concat(chunks)) })
+    //       stderr.once('data', (data) => { reject(String(data)) })
+    //     })
+    //   })
+    // }     
 
-        gm(bufferOriginal, 'output.jpg')
-          .resize(100, 100)
-          .toBuffer('jpeg',function (err, buffer) {
-            if (err) {
-              console.log(err);
-              return;
-            }
-            bufferTest = buffer;
-            console.log(bufferTest)
-            console.log('done!');
-        });
-
-
-        // function gmToBuffer (data) {
-        //   return new Promise((resolve, reject) => {
-        //     data.stream((err, stdout, stderr) => {
-        //       if (err) { return reject(err) }
-        //       const chunks = []
-        //       stdout.on('data', (chunk) => { chunks.push(chunk) })
-        //       // these are 'once' because they can and do fire multiple times for multiple errors,
-        //       // but this is a promise so you'll have to deal with them one at a time
-        //       stdout.once('end', () => { resolve(Buffer.concat(chunks)) })
-        //       stderr.once('data', (data) => { reject(String(data)) })
-        //     })
-        //   })
-        // }
-        
-
-        // const data = gm(bufferOriginal, 'output.jpg').resize(500)
-        // gmToBuffer(data).then(console.log)
-
-        // function processImage(data) {
-        //   gm(data, 'test.jpg')
-        //       .resize('300x300')
-        //     .background('white')
-        //     .flatten()
-        //     .setFormat('jpg')
-        //     .toBuffer(function(err, buffer) {
-        //       if (err) {
-        //           throw err;
-        //       } else {
-        //           fs.writeFile('asd.jpg', buffer);
-        //       }
-        //     });
-        //   }
-
-    }
+    // const data = gm(bufferOriginal, 'output.jpg').resize(500)
+    // gmToBuffer(data).then(console.log)
 
     // Create different size versions of original image 
     // Returns buffer output
-    // const bufferSmall = await resizeImage(bufferOriginal, mimeType, 'small', next);
-    // const bufferMedium = await resizeImage(bufferOriginal, mimeType, 'medium', next);
+    const bufferSmall = await resizeImage(bufferOriginal, mimeType, 'small', next);
+    const bufferMedium = await resizeImage(bufferOriginal, mimeType, 'medium', next);
 
     // Get reference to old profile images to delete later
     const user = await User.findOne({ _id: userId });
     if (user.avatar.original) {
       oldImageNameOriginal = user.avatar.original;
-      // oldImageNameMedium = user.avatar.medium;
+      oldImageNameMedium = user.avatar.medium; 
       oldImageNameSmall = user.avatar.small;
     }
 
     // Upload TO AWS S3 bucket
     // Returns bucket image path
     await uploadFileS3(bufferOriginal, imageNameOriginal, mimeType, `${PROFILE_IMG_FOLDER}/original`, next);
-    // await uploadFileS3(bufferSmall, imageNameSmall, mimeType,`${PROFILE_IMG_FOLDER}/small`, next);
-    // await uploadFileS3(bufferMedium, imageNameMedium, mimeType, `${PROFILE_IMG_FOLDER}/medium`, next);
+    await uploadFileS3(bufferSmall, imageNameSmall, mimeType,`${PROFILE_IMG_FOLDER}/small`, next);
+    await uploadFileS3(bufferMedium, imageNameMedium, mimeType, `${PROFILE_IMG_FOLDER}/medium`, next);
 
     await User.updateOne(
       { _id: userId },
@@ -176,8 +137,8 @@ const uploadAvatarImage = async (req: Request, res: Response, next: NextFunction
     // Delete old profile images
     if (oldImageNameOriginal) {
       deleteFileS3(oldImageNameOriginal, `${PROFILE_IMG_FOLDER}/original`);
-      // deleteFileS3(oldImageNameSmall, `${PROFILE_IMG_FOLDER}/small`);
-      // deleteFileS3(oldImageNameMedium, `${PROFILE_IMG_FOLDER}/medium`);
+      deleteFileS3(oldImageNameSmall, `${PROFILE_IMG_FOLDER}/small`);
+      deleteFileS3(oldImageNameMedium, `${PROFILE_IMG_FOLDER}/medium`);
     }
   } catch (err) {
     console.log(err);
