@@ -33,7 +33,6 @@ export const onMessage = async (
       recipientSocketId: string,
       notification;
 
-  // Update database
   // Private chat
   if (chatType === 'private') {
 
@@ -113,10 +112,7 @@ export const onMessage = async (
       createDate: message.createDate
     },
     reply: message.reply,
-    image: {
-      name: message.image,
-      path: `${process.env.S3_DATA_URL}/${CHAT_MESSAGE_IMG_FOLDER}/${chatId}/${message.image}`
-    }
+    image: message.image
   });
   await newMessage.save();
 

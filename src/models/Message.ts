@@ -38,10 +38,7 @@ const messageSchema = new mongoose.Schema({
     origMsgText: String,
     origMsgSender: String
   },
-  image: {
-    name: String,
-    path: String
-  }
+  image: { type: String, default: '' }
 });
 
 mongoose.model('Message', messageSchema);

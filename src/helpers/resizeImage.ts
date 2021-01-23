@@ -22,6 +22,7 @@ const resizeImage = async (
       .toBuffer('jpeg', (err, buffer) => {
         if (err) { 
           console.log(err);
+          reject(err);
           next(err);
         };
         if (buffer) { 
