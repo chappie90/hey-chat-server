@@ -31,6 +31,7 @@ export const onMessage = async (
       newChat,
       recipient,
       recipientSocketId: string,
+      addNewContact = false,
       notification;
 
   // Private chat
@@ -79,6 +80,7 @@ export const onMessage = async (
             { $set: { requestAccepted: true } }
           );
           chat.requestAccepted = true;
+          addNewContact = true;
 
           // Add both users to each other's contact lists
           await User.updateOne(
@@ -162,7 +164,8 @@ export const onMessage = async (
           newMessage, 
           newTMessage: message, 
           senderId,
-          unreadMessagesCount
+          unreadMessagesCount,
+          addNewContact
         };
 
         // If chat has been deleted by sender, restore chat
