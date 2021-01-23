@@ -165,7 +165,8 @@ export const onMessage = async (
           newTMessage: message, 
           senderId,
           unreadMessagesCount,
-          addNewContact
+          addNewContact,
+          newContact: recipient
         };
 
         // If chat has been deleted by sender, restore chat
