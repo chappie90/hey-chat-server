@@ -21,7 +21,7 @@ const sendPushNotification = async (
           // "sound" : "bingbong.aiff" / "chime.aiff"
         }
       },
-      "payload": {
+      "data": {
         "chatId": chatId,
       },
       "topic":process.env.APP_ID
