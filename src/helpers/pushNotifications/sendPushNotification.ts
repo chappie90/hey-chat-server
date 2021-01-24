@@ -22,7 +22,7 @@ const sendPushNotification = async (
         }
       },
       "payload": {
-        "chatId": chatId,
+        "chatId": { chat: { chatId } },
       },
       "topic":process.env.APP_ID
     });
