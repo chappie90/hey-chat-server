@@ -21,9 +21,7 @@ const sendPushNotification = async (
           // "sound" : "bingbong.aiff" / "chime.aiff"
         }
       },
-      "payload": {
-        "chatId": { chat: { chatId } },
-      },
+      "payload": { chat: { chatId } },
       "topic":process.env.APP_ID
     });
     global.apnProvider.send(notification, deviceToken)
