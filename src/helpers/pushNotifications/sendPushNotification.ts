@@ -43,6 +43,9 @@ const sendPushNotification = async (
           "sound":"default",
           // "icon":
         },
+        "data":{
+          chat: { chatId }
+        },
         "priority":"high",
       },
       token:deviceToken

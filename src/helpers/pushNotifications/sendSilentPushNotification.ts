@@ -38,9 +38,10 @@ const sendSilentPushNotification = async (
       "android":{
         "priority":"high",
         "data":{
-          "silent":"true",
-          "type":type,
-          "payload": data
+          "silent": "true",
+          "type": type,
+          "payload": data,
+          "chatId": chatId
         }
       },
       token:deviceToken
