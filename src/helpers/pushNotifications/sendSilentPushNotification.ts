@@ -18,8 +18,8 @@ const sendSilentPushNotification = async (
       "topic":process.env.APP_ID,
       "payload":{
         "silent":true,
-        "type":type,
-        "payload":JSON.stringify(data),
+        "type": type,
+        "payload": data,
         "chatId": chatId
       }
     });
@@ -40,7 +40,7 @@ const sendSilentPushNotification = async (
         "data":{
           "silent":"true",
           "type":type,
-          "payload":JSON.stringify(data)
+          "payload": data
         }
       },
       token:deviceToken
