@@ -201,7 +201,7 @@ export const onMessage = async (
           io.to(recipientSocketId).emit('message_received', JSON.stringify(data));
         } else {
           // If recipient is offline, send silent push notification with data to update app state
-          sendSilentPushNotification(deviceOS, deviceToken, data, 'message_received');
+          sendSilentPushNotification(deviceOS, deviceToken, data, 'message_received', chatId);
         }
 
         // Send confirmation of message delivered to sender and update chat list
@@ -213,7 +213,7 @@ export const onMessage = async (
       if (deviceOS === 'android' && recipientSocketId) {
         sendPushNotification(deviceOS, deviceToken, senderName, message.text);
       }
-      if (deviceOS === 'ios')  sendPushNotification(deviceOS, deviceToken, senderName, message.text);
+      if (deviceOS === 'ios')  sendPushNotification(deviceOS, deviceToken, senderName, message.text, chatId);
     }
   }
 };

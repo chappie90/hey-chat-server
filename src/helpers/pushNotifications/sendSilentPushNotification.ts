@@ -4,7 +4,8 @@ const sendSilentPushNotification = async (
   deviceOS: string,
   deviceToken: string,
   data: any,
-  type: string
+  type: string,
+  chatId?: string
 ): Promise<void> => {
   let notification;
 
@@ -18,7 +19,8 @@ const sendSilentPushNotification = async (
       "payload":{
         "silent":true,
         "type":type,
-        "payload":JSON.stringify(data)
+        "payload":JSON.stringify(data),
+        "chatId": chatId
       }
     });
     // notification.pushType = 'voip';

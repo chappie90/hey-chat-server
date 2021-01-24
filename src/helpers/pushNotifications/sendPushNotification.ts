@@ -4,7 +4,8 @@ const sendPushNotification = async (
   deviceOS: string,
   deviceToken: string,
   title: string,
-  body: string
+  body: string,
+  chatId?: string
 ): Promise<void> => {
   let notification;
 
@@ -15,10 +16,13 @@ const sendPushNotification = async (
           "title":title,
           "body":body,
           "sound":"default",
-          "badge":1
+          // "badge":1
           // "action-loc-key" : "PLAY"
           // "sound" : "bingbong.aiff" / "chime.aiff"
         }
+      },
+      "payload": {
+        "chatId": chatId,
       },
       "topic":process.env.APP_ID
     });
