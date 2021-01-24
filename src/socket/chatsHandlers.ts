@@ -82,6 +82,18 @@ export const onMessage = async (
           chat.requestAccepted = true;
           addNewContact = true;
 
+          // Check if message recipient is online
+          if (recipientId in users) {
+            recipient.online =  true;
+
+            // Add recipient to sender's channel
+            users[recipientId].join(senderId);
+            // Add sender to recipient's channel
+            socket.join(recipientId);
+          } else {
+            recipient.online = false;
+          }
+
           // Add both users to each other's contact lists
           await User.updateOne(
             { _id: senderId },
