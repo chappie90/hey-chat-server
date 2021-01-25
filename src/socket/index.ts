@@ -1,5 +1,5 @@
 import { onConnect, onDisconnect } from './mainHandlers';
-import { onUpdateProfileImage } from './profileHandlers';
+import { onUpdateProfileImage } from './contactsHandlers';
 import { 
   onMessage, 
   onLikeMessage, 

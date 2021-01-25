@@ -24,8 +24,8 @@ export const onConnect = async (
     const user = await User.findOne(
       { _id: userId }
     ).lean()
-      .populate('pendingContacts', 'username')
-      .populate('contacts', 'username')
+      .populate('pendingContacts', 'username avatar.small')
+      .populate('contacts', 'username avatar.small')
       .populate('chats', 'chatId participants')
       .populate('deletedChats', 'participants');
 

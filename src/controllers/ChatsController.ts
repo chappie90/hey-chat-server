@@ -51,7 +51,7 @@ const getChats = async (req: Request, res: Response, next: NextFunction): Promis
       chat.muted = user.mutedChats.includes(chat.chatId) ? true : false;
     } 
 
-    res.status(200).send({ chats });
+    res.status(200).send({ chats: chats.slice(0, 10) });
   } catch (err) {
     next(err);
   }
