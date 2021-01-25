@@ -47,3 +47,18 @@ export const getContacts = async (
     console.log(err);
   }
 };
+
+// User updates profile image
+export const onUpdateProfileImage = async (
+  socket: Socket, 
+  data: string
+): Promise<void> => {
+  const { userId } = JSON.parse(data);
+
+  const user = await User.findOne({ _id: userId });
+  const newProfileImage = user.avatar.small;
+
+  // Notify all active contacts of new profile image
+  const imageData = { userId, profileImage: newProfileImage };
+  socket.broadcast.to(userId).emit('profile_image_updated', JSON.stringify(imageData));
+};
