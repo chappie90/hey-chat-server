@@ -42,7 +42,7 @@ const messageSchema = new mongoose.Schema({
     type: String, 
     default: '' 
   },
-  adming: {
+  admin: {
     type: Boolean,
     default: false
   }
