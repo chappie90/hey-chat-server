@@ -105,7 +105,8 @@ export const onMissedCall = async (
     if (users[calleeId]) {
       const calleeSocketId = users[calleeId].id;
       // Notify calee they have a missed call
-      io.to(calleeSocketId).emit('missed_call_received');
+      const missedCallData = { chatId, message };
+      io.to(calleeSocketId).emit('missed_call_received', JSON.stringify(missedCallData));
     }
 
   } catch (err) {
