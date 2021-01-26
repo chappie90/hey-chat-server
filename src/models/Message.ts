@@ -38,7 +38,14 @@ const messageSchema = new mongoose.Schema({
     origMsgText: String,
     origMsgSender: String
   },
-  image: { type: String, default: '' }
+  image: { 
+    type: String, 
+    default: '' 
+  },
+  adming: {
+    type: Boolean,
+    default: false
+  }
 });
 
 mongoose.model('Message', messageSchema);

@@ -5,8 +5,6 @@ import PushNotificationsCtrl from '../controllers/PushNotificationsController';
 const router = Router();
 
 router.post('/api/push-notifications/token/save', PushNotificationsCtrl.saveDeviceToken);
-router.post('/api/push-notifications/voip/token/save', PushNotificationsCtrl.saveVoipDeviceToken);
-router.post('/api/push-notifications/voip/send', PushNotificationsCtrl.sendVoipPush);
-router.post('/api/push-notifications/voip/end-call', PushNotificationsCtrl.endCall);
+router.post('/api/push-notifications/token/voip/save', PushNotificationsCtrl.saveVoipDeviceToken);
 
 export default router;

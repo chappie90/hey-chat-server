@@ -211,7 +211,7 @@ export const onMessage = async (
       // Send push notification
       // For android only if app is in foreground
       if (deviceOS === 'android' && recipientSocketId) {
-        sendPushNotification(deviceOS, deviceToken, senderName, message.text);
+        sendPushNotification(deviceOS, deviceToken, senderName, message.text, chatId);
       }
       if (deviceOS === 'ios')  sendPushNotification(deviceOS, deviceToken, senderName, message.text, chatId);
     }
