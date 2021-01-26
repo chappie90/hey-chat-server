@@ -12,7 +12,8 @@ import {
   onSendSdpOffer, 
   onSendICECandidate,
   onSendSdpAnswer, 
-  onEndCall
+  onEndCall,
+  onMissedCall
 } from './callHandlers';
 import { Socket } from 'socket.io';
 
@@ -89,6 +90,11 @@ const initSocket = (io: Socket) => {
     // Either user ends call
     socket.on('end_call', (data: string) => {
       onEndCall(io, socket, users, data);
+    });
+
+    // Calee missed a call
+    socket.on('missed_call', (data: string) => {
+      onMissedCall(io, socket, users, data);
     });
 
     // Disconnect from socket

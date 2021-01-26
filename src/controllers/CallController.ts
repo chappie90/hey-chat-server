@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from 'express';
 const mongoose = require('mongoose');
 
 const User = mongoose.model('User');
-const Message = mongoose.model('Message');
 import sendVoipPushNotification from '../helpers/pushNotifications/sendVoipPushNotification';
 import sendSilentPushNotification from '../helpers/pushNotifications/sendSilentPushNotification';
 
@@ -48,37 +47,8 @@ const endCall = async (req: Request, res: Response, next: NextFunction): Promise
   }
 };
 
-const markMissedCall = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  const { chatId, message  } = req.body;
-
-  console.log('mark missed call')
-  console.log(chatId)
-  console.log(message)
-
-  // Create new message for missed call
-  try {
-    const newMessage = new Message({
-      chatId,
-      sender: message.sender.name,
-      message: {
-        id: message._id,
-        text: message.text,
-        createDate: message.createDate
-      },
-      admin: true
-    });
-    await newMessage.save();
-
-    res.status(200).send({ missedCallMessage: newMessage });
-  } catch (err) {
-    console.log(err);
-    next(err);
-  }
-};
-
 export default {
   sendVoipPush,
-  endCall,
-  markMissedCall
+  endCall
 };
 

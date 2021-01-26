@@ -2,6 +2,7 @@ import { Socket } from 'socket.io';
 const mongoose = require('mongoose');
 
 const User = mongoose.model('User');
+const Message = mongoose.model('Message');
 
 // Callee sends sdp offer on call answer
 export const onSendSdpOffer = async (
@@ -75,6 +76,40 @@ export const onEndCall = async (
     // Notify user call has been ended
     console.log('emitting call_ended')
     io.to(contactSocketId).emit('call_ended');
+  }
+};
+
+// Callee missed a call
+export const onMissedCall = async (
+  io: Socket,
+  socket: Socket, 
+  users: { [key: string]: Socket },
+  data: string
+): Promise<void> => {
+  const { chatId, calleeId, message  } = JSON.parse(data);
+
+  try {
+    const newMessage = new Message({
+      chatId,
+      sender: message.sender.name,
+      message: {
+        id: message._id,
+        text: message.text,
+        createDate: message.createDate
+      },
+      admin: true
+    });
+    await newMessage.save();
+
+    // Check if callee is online and get socket id
+    if (users[calleeId]) {
+      const calleeSocketId = users[calleeId].id;
+      // Notify calee they have a missed call
+      io.to(calleeSocketId).emit('missed_call_received');
+    }
+
+  } catch (err) {
+    console.log(err);
   }
 };
 
