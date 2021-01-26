@@ -9,6 +9,14 @@ const sendPushNotification = async (
 ): Promise<void> => {
   let notification;
 
+  const data = {
+    payload: {
+      chat: {
+        chatId
+      }
+    }
+  };
+
   if (deviceOS === 'ios') {
     notification = new apn.Notification({
       "aps":{
@@ -21,9 +29,7 @@ const sendPushNotification = async (
           // "sound" : "bingbong.aiff" / "chime.aiff"
         }
       },
-      "payload": {
-         payload: { chat: { chatId } }
-      },
+      "payload": JSON.stringify(data),
       "topic":process.env.APP_ID
     });
     global.apnProvider.send(notification, deviceToken)
@@ -43,8 +49,8 @@ const sendPushNotification = async (
           "sound":"default",
           // "icon":
         },
-        "data":{
-          chat: { chatId }
+        "data": {
+          "payload": JSON.stringify(data)
         },
         "priority":"high",
       },

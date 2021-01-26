@@ -19,8 +19,7 @@ const sendSilentPushNotification = async (
       "payload":{
         "silent":true,
         "type": type,
-        "payload": data,
-        "chatId": chatId
+        "payload": JSON.stringify(data)
       }
     });
     // notification.pushType = 'voip';
@@ -40,8 +39,7 @@ const sendSilentPushNotification = async (
         "data":{
           "silent": "true",
           "type": type,
-          "payload": data,
-          "chatId": chatId
+          "payload": JSON.stringify(data)
         }
       },
       token:deviceToken
