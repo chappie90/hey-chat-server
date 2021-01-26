@@ -29,7 +29,9 @@ const sendPushNotification = async (
           // "sound" : "bingbong.aiff" / "chime.aiff"
         }
       },
-      "payload": JSON.stringify(data),
+      "payload": {
+        "payload": JSON.stringify(data)
+      },
       "topic":process.env.APP_ID
     });
     global.apnProvider.send(notification, deviceToken)
