@@ -9,13 +9,7 @@ const sendPushNotification = async (
 ): Promise<void> => {
   let notification;
 
-  const data = {
-    payload: {
-      chat: {
-        chatId
-      }
-    }
-  };
+  const data = { chat: { chatId } };
 
   if (deviceOS === 'ios') {
     notification = new apn.Notification({
