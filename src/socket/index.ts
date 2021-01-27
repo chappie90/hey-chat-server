@@ -12,8 +12,7 @@ import {
   onSendSdpOffer, 
   onSendICECandidate,
   onSendSdpAnswer, 
-  onEndCall,
-  onMissedCall
+  onEndCall
 } from './callHandlers';
 import { Socket } from 'socket.io';
 
