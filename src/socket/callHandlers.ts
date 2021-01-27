@@ -2,7 +2,6 @@ import { Socket } from 'socket.io';
 const mongoose = require('mongoose');
 
 const User = mongoose.model('User');
-const Message = mongoose.model('Message');
 
 // Callee sends sdp offer on call answer
 export const onSendSdpOffer = async (
@@ -67,9 +66,6 @@ export const onEndCall = async (
 ): Promise<void> => {
   const { contactId  } = JSON.parse(data);
 
-  console.log('on End call')
-  console.log(contactId)
-
   // Check if contact is online and get socket id
   if (users[contactId]) {
     const contactSocketId = users[contactId].id;
@@ -78,40 +74,4 @@ export const onEndCall = async (
     io.to(contactSocketId).emit('call_ended');
   }
 };
-
-// Callee missed a call
-export const onMissedCall = async (
-  io: Socket,
-  socket: Socket, 
-  users: { [key: string]: Socket },
-  data: string
-): Promise<void> => {
-  const { chatId, calleeId, message  } = JSON.parse(data);
-
-  try {
-    const newMessage = new Message({
-      chatId,
-      sender: message.sender.name,
-      message: {
-        id: message._id,
-        text: message.text,
-        createDate: message.createDate
-      },
-      admin: true
-    });
-    await newMessage.save();
-
-    // Check if callee is online and get socket id
-    if (users[calleeId]) {
-      const calleeSocketId = users[calleeId].id;
-      // Notify calee they have a missed call
-      const missedCallData = { chatId, message };
-      io.to(calleeSocketId).emit('missed_call_received', JSON.stringify(missedCallData));
-    }
-
-  } catch (err) {
-    console.log(err);
-  }
-};
-
 

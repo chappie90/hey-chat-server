@@ -92,11 +92,6 @@ const initSocket = (io: Socket) => {
       onEndCall(io, socket, users, data);
     });
 
-    // Calee missed a call
-    socket.on('missed_call', (data: string) => {
-      onMissedCall(io, socket, users, data);
-    });
-
     // Disconnect from socket
     socket.on('disconnect', async () => {
       await onDisconnect(io, socket, users, userId);
