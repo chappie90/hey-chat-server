@@ -61,12 +61,12 @@ const endCall = async (req: Request, res: Response, next: NextFunction): Promise
 
 const toggleVideo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { chatId, calleeId, isRemoteEnabled } = req.body;
+    const { chatId, calleeId } = req.body;
 
     const user = await User.findOne({ _id: calleeId }).lean();
     const { deviceOS, deviceToken } = user;
     
-    const data = { chatId, isRemoteEnabled };
+    const data = { chatId };
 
     await sendSilentPushNotification(deviceOS, deviceToken, data, 'voip_video_toggled', chatId);
     
