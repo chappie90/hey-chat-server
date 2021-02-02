@@ -61,9 +61,9 @@ const missedCall = async (req: Request, res: Response, next: NextFunction): Prom
 
 const endCall = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { chatId, calleeId } = req.body;
+    const { chatId, contactId } = req.body;
 
-    const user = await User.findOne({ _id: calleeId }).lean();
+    const user = await User.findOne({ _id: contactId }).lean();
     const { deviceOS, deviceToken } = user;
     
     const data = { chatId };
