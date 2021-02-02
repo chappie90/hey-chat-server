@@ -29,7 +29,7 @@ const sendVoipPush = async (req: Request, res: Response, next: NextFunction): Pr
   }
 };
 
-const endCall = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+const missedCall = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { chatId, calleeId, message   } = req.body;
 
@@ -49,6 +49,24 @@ const endCall = async (req: Request, res: Response, next: NextFunction): Promise
     const { deviceOS, deviceToken } = user;
     
     const data = { chatId, message };
+
+    await sendSilentPushNotification(deviceOS, deviceToken, data, 'voip_call_ended', chatId);
+    
+    res.status(200).send({ success: true });
+  } catch(err) {
+    console.log(err);
+    next(err);
+  }
+};
+
+const endCall = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { chatId, calleeId } = req.body;
+
+    const user = await User.findOne({ _id: calleeId }).lean();
+    const { deviceOS, deviceToken } = user;
+    
+    const data = { chatId };
 
     await sendSilentPushNotification(deviceOS, deviceToken, data, 'voip_call_ended', chatId);
     
@@ -79,6 +97,7 @@ const toggleVideo = async (req: Request, res: Response, next: NextFunction): Pro
 
 export default {
   sendVoipPush,
+  missedCall,
   endCall,
   toggleVideo
 };
