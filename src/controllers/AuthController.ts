@@ -66,7 +66,7 @@ const getAvatarImage = async (req: Request, res: Response, next: NextFunction): 
 
     const user = await User.findOne({ _id: userId });
 
-    res.status(200).send({ profileImage: user.avatar.medium });
+    res.status(200).send({ avatar: user.avatar });
   } catch(err) {
     console.log(err);
     next(err);
@@ -115,7 +115,9 @@ const uploadAvatarImage = async (req: Request, res: Response, next: NextFunction
       } }
     );
 
-    res.status(200).send({ profileImage: imageNameMedium }); 
+    const avatar = { small: imageNameSmall, medium: imageNameMedium };
+
+    res.status(200).send({ avatar }); 
 
     // Delete old profile images
     if (oldImageNameOriginal) {
