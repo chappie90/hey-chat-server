@@ -95,10 +95,29 @@ const toggleVideo = async (req: Request, res: Response, next: NextFunction): Pro
   }
 };
 
+const requestVideo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { chatId, contactId } = req.body;
+
+    const user = await User.findOne({ _id: contactId }).lean();
+    const { deviceOS, deviceToken } = user;
+    
+    const data = { chatId };
+
+    await sendSilentPushNotification(deviceOS, deviceToken, data, 'voip_audio_video_requested', chatId);
+    
+    res.status(200).send({ success: true });
+  } catch(err) {
+    console.log(err);
+    next(err);
+  }
+};
+
 export default {
   sendVoipPush,
   missedCall,
   endCall,
-  toggleVideo
+  toggleVideo,
+  requestVideo
 };
 
