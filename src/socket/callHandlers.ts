@@ -12,12 +12,6 @@ export const onSendSdpOffer = async (
 ): Promise<void> => {
   const { callerId, offer } = JSON.parse(data);
 
-  console.log('on send sdp offer')
-  console.log(callerId)
-  console.log(offer)
-  console.log(users)
-  console.log(users[callerId])
-
   // Check if recipient is online and get socket id
   if (users[callerId]) {
     const callerSocketId = users[callerId].id;
