@@ -22,6 +22,9 @@ const initSocket = (io: Socket) => {
   // Connect to socket
   io.on('connection', async (socket: Socket) => {
     const { userId, socketId } = await onConnect(io, socket, users);
+
+    console.log('connected')
+    console.log(socket.handshake.query.userId);
     
     // To show a list of all room
     // console.log(io.sockets.adapter.rooms);
