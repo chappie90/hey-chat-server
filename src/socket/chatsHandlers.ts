@@ -37,7 +37,10 @@ export const onMessage = async (
   // Private chat
   if (chatType === 'private') {
 
-    recipient = await User.findOne({ _id: recipientId }).lean(); 
+    recipient = await User.findOne(
+      { _id: recipientId },
+      { username: 1, avatar: 1 }
+    ).lean(); 
 
     if (isFirstMessage) { 
       // Create chat if first message
