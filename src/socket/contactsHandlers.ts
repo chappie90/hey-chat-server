@@ -42,6 +42,9 @@ export const getContacts = async (
       }
     }
 
+    console.log(contacts)
+    console.log(onlineContacts)
+
     return { contacts, onlineContacts };
   } catch (err) {
     console.log('Get contacts socket contacts handler error');
