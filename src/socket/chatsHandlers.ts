@@ -156,6 +156,8 @@ export const onMessage = async (
         recipient.pending = true;
         // Set contact chat id
         recipient.chatId = chatId;
+        // Set chat requester
+        recipient.chatRequester = senderId;
 
         const data = { newChat, newMessage, pendingContact: recipient };
 
