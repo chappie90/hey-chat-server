@@ -24,6 +24,7 @@ export type TContact = {
   username: string;
   pending?: boolean;
   chatId?: string;
+  chatRequester: number;
   online: boolean;
 };
 
