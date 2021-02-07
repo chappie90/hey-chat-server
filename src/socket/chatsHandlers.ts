@@ -39,7 +39,7 @@ export const onMessage = async (
 
     recipient = await User.findOne(
       { _id: recipientId },
-      { username: 1, avatar: 1 }
+      { username: 1, avatar: 1, deletedChats: 1 }
     ).lean(); 
 
     if (isFirstMessage) { 
