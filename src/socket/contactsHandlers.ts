@@ -2,7 +2,7 @@ import { Socket } from "socket.io";
 const mongoose = require('mongoose');
 
 const User = mongoose.model('User');
-import { TUser, TContact, TChat } from '../types/index';
+import { TUser, TContact } from '../types/index';
 
 // Get user contacts
 export const getContacts = async (
@@ -21,10 +21,9 @@ export const getContacts = async (
     const contacts: TContact[] = [ ...pendingContacts, ...user.contacts ];
 
     for (const contact of contacts) {
-      // Get id of chat between user and each contact and chat requester
-      const chat: TChat = chats.filter(chat => chat.participants.filter((p: any) => p === contact._id))[0];
-      contact.chatId = chat.chatId;
-      contact.chatRequester = chat.requester;
+      // Get id of chat between user and each contact
+      const chatId: string = chats.filter(chat => chat.participants.filter((p: any) => p === contact._id))[0].chatId;
+      contact.chatId = chatId;
 
       // Identify contacts who are online
       const contactId = contact._id.toString();

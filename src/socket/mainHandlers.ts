@@ -26,7 +26,7 @@ export const onConnect = async (
     ).lean()
       .populate('pendingContacts', 'username avatar.small')
       .populate('contacts', 'username avatar.small')
-      .populate('chats', 'chatId participants requester')
+      .populate('chats', 'chatId participants')
       .populate('deletedChats', 'participants');
 
     // Get user contacts

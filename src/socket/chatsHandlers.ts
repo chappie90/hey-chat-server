@@ -50,17 +50,13 @@ export const onMessage = async (
       newChat.populate('participants', '_id username profile').execPopulate();
       await newChat.save();
 
-      // Add chat and contact to users chat lists and pendinging contacts
+      // Add chat to both users chat lists
       await User.updateOne(
         { _id: recipientId },
-        { 
-          $addToSet: { 
-            pendingContacts:  senderId,
-            chats: newChat._id 
-          } 
-        }
+        { $addToSet: { chats: newChat._id } }
       );
-
+       
+      // Add contact to user's pending contacts and add new chat
       await User.updateOne(
         { _id: senderId }, 
         { 
@@ -101,10 +97,7 @@ export const onMessage = async (
           // Add both users to each other's contact lists
           await User.updateOne(
             { _id: senderId },
-            { 
-              $pull: { pendingContacts: recipientId },
-              $addToSet: { contacts:  recipientId }
-            }
+            { $addToSet: { contacts:  recipientId }}
           );
 
           await User.updateOne(
@@ -156,8 +149,6 @@ export const onMessage = async (
         recipient.pending = true;
         // Set contact chat id
         recipient.chatId = chatId;
-        // Set chat requester
-        recipient.chatRequester = senderId;
 
         const data = { newChat, newMessage, pendingContact: recipient };
 
