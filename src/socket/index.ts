@@ -1,5 +1,5 @@
 import { onConnect, onDisconnect } from './mainHandlers';
-import { onUpdateProfileImage } from './contactsHandlers';
+import { onUpdateProfileImage, onDeleteContact } from './contactsHandlers';
 import { 
   onMessage, 
   onLikeMessage, 
@@ -89,6 +89,11 @@ const initSocket = (io: Socket) => {
     // Either user ends call
     socket.on('end_call', (data: string) => {
       onEndCall(io, socket, users, data);
+    });
+
+    // User deletes contact
+    socket.on('delete_contact', (data: string) => {
+      onDeleteContact(io, socket, users, data);
     });
 
     // Disconnect from socket
